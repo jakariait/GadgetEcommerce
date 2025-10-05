@@ -18,7 +18,7 @@ const SocialMedia = () => {
   const { socialMediaLinks } = useSocialMediaLinkStore();
   return (
     <div>
-      <div className={"flex gap-2 text-lg"}>
+      <div className={"grid grid-cols-9 md:flex gap-2 text-lg"}>
         {socialMediaLinks?.facebook && (
           <a
             href={socialMediaLinks.facebook}

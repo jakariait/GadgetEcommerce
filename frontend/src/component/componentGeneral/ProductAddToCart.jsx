@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaRegHeart } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
 import { FiMinus } from "react-icons/fi";
@@ -8,7 +8,6 @@ import useCartStore from "../../store/useCartStore.js";
 import LiveStatsNotification from "./LiveStatsNotification.jsx";
 
 const ProductAddToCart = ({ product }) => {
-
   const [quantity, setQuantity] = useState(1);
   const MAX_QUANTITY = 5; // Set the limit for Cart Quantity
   const { addToCart } = useCartStore();
@@ -47,8 +46,8 @@ const ProductAddToCart = ({ product }) => {
               selectedVariant?.discount > 0
                 ? selectedVariant.discount
                 : selectedVariant?.price ||
-                product.finalDiscount ||
-                product.finalPrice,
+                  product.finalDiscount ||
+                  product.finalPrice,
             quantity,
           },
         ],
@@ -82,9 +81,6 @@ const ProductAddToCart = ({ product }) => {
     );
     setSelectedVariant(newVariant);
   };
-
-
-
 
   return (
     <div>
@@ -150,18 +146,6 @@ const ProductAddToCart = ({ product }) => {
             <div>Purchase & Earn: {product.rewardPoints} points.</div>
           )}
 
-          {/* Stock */}
-          <div>
-            {selectedVariant?.stock === 0 || product.finalStock === 0 ? (
-              <span className="text-red-600 font-semibold">Stock Out</span>
-            ) : selectedVariant?.stock < 20 || product.finalStock < 20 ? (
-              <span className="primaryTextColor font-semibold">
-                Hurry up! Only {selectedVariant?.stock || product.finalStock}{" "}
-                left
-              </span>
-            ) : null}
-          </div>
-
           {/* With Variant Price Display */}
           {product.variants?.length > 0 && (
             <div className={"flex gap-4 items-center"}>
@@ -197,6 +181,9 @@ const ProductAddToCart = ({ product }) => {
                   "primaryBgColor accentTextColor px-2 py-2 md:py-3 rounded-l cursor-pointer"
                 }
                 onClick={() => handleQuantityChange("decrease")}
+                disabled={
+                  selectedVariant?.stock === 0 || product.finalStock === 0
+                }
               >
                 <FiMinus />
               </button>
@@ -208,7 +195,11 @@ const ProductAddToCart = ({ product }) => {
                   "primaryBgColor accentTextColor px-2 py-2 md:py-3 rounded-r cursor-pointer"
                 }
                 onClick={() => handleQuantityChange("increase")}
-                disabled={quantity >= MAX_QUANTITY} // Disable when limit is reached
+                disabled={
+                  quantity >= MAX_QUANTITY ||
+                  selectedVariant?.stock === 0 ||
+                  product.finalStock === 0
+                } // Disable when limit is reached or out of stock
               >
                 <FaPlus />
               </button>
@@ -234,21 +225,27 @@ const ProductAddToCart = ({ product }) => {
             )}
           </div>
           {/*Cash On Delivery Order Button*/}
-          <motion.button
-            className="primaryBgColor accentTextColor px-2 py-1 md:py-2 rounded cursor-pointer"
-            animate={{ scale: [1, 1.05, 1] }} // Scale animation
-            transition={{
-              duration: 2.5,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            onClick={() => {
-              addToCart(product, quantity, selectedVariant);
-              navigate("/checkout");
-            }}
-          >
-            Order with Cash on Delivery
-          </motion.button>
+          {selectedVariant?.stock === 0 || product.finalStock === 0 ? (
+            <button className="text-red-600 font-semibold w-full mt-2" disabled>
+              Stock Out
+            </button>
+          ) : (
+            <motion.button
+              className="primaryBgColor accentTextColor px-2 py-1 md:py-2 rounded cursor-pointer"
+              animate={{ scale: [1, 1.05, 1] }} // Scale animation
+              transition={{
+                duration: 2.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              onClick={() => {
+                addToCart(product, quantity, selectedVariant);
+                navigate("/checkout");
+              }}
+            >
+              Order with Cash on Delivery
+            </motion.button>
+          )}
         </div>
       </div>
     </div>

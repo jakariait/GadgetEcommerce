@@ -15,6 +15,8 @@ import NewsletterForm from "./NewsletterForm.jsx";
 import SocialMedia from "./SocialMedia.jsx";
 import Skeleton from "react-loading-skeleton";
 import useAuthUserStore from "../../store/AuthUserStore.js";
+import FooterContact from "./FooterContact.jsx";
+import ImageComponent from "./ImageComponent.jsx";
 
 const Footer = () => {
   const { GeneralInfoList, GeneralInfoListLoading, GeneralInfoListError } =
@@ -75,51 +77,18 @@ const Footer = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                   <div>
+                    <Link to="/">
+                      <ImageComponent
+                        imageName={GeneralInfoList?.PrimaryLogo}
+                        className="w-50 py-2"
+                      />
+                    </Link>
                     <p>{GeneralInfoList?.ShortDescription}</p>
+                    <FooterContact />
+
                     <h1 className={"mb-3 mt-3"}>Follow Us</h1>
                     <SocialMedia />
                   </div>
-                </AccordionDetails>
-              </Accordion>
-
-              {/* My Account */}
-              <Accordion
-                style={{
-                  background: "transparent",
-                  boxShadow: "none",
-                  width: "100%",
-                  color: "white",
-                }}
-              >
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon className={"text-white"} />}
-                  aria-controls="panel2a-content"
-                >
-                  <Typography>My Account</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <ul>
-                    <li className={"hover:primaryTextColor"}>My Account</li>
-                    <li className={"hover:primaryTextColor"}>My Orders</li>
-                    <li className={"hover:primaryTextColor"}>My Wishlist</li>
-                    <li className={"hover:primaryTextColor"}>
-                      Payment History
-                    </li>
-                    <li className={"hover:primaryTextColor"}>
-                      Support Tickets
-                    </li>
-                    <li className={"hover:primaryTextColor"}>Promo/Coupons</li>
-                    {user ? (
-                      <li
-                        className={"cursor-pointer hover:primaryTextColor"}
-                        onClick={handleLogout}
-                      >
-                        Logout
-                      </li>
-                    ) : (
-                      <li className={"hover:primaryTextColor"}>Login</li>
-                    )}
-                  </ul>
                 </AccordionDetails>
               </Accordion>
 
@@ -208,55 +177,27 @@ const Footer = () => {
                 "xl:container xl:mx-auto lg:grid grid-cols-1 lg:grid-cols-12 gap-10 justify-between py-10 px-6  hidden"
               }
             >
-              <div className={"col-span-5 relative"}>
+              <div className={"col-span-6 relative"}>
+
                 <h1 className={"mb-3"}>
                   About Us
                   <span className="absolute left-0 top-6 w-15 border-b-2 border-gray-300 mt-1"></span>
                 </h1>
+
+                <Link to="/">
+                  <ImageComponent
+                    imageName={GeneralInfoList?.PrimaryLogo}
+                    className="w-50 py-2"
+                  />
+                </Link>
+
                 <p>{GeneralInfoList?.ShortDescription}</p>
+                <FooterContact />
                 <h1 className={"mb-3 mt-3"}>Follow Us</h1>
                 <SocialMedia />
               </div>
 
-              <div className={"col-span-2 relative"}>
-                <h1 className={"mb-3"}>
-                  My Account
-                  <span className="absolute left-0 top-6 w-15 border-b-2 border-gray-300 mt-1"></span>
-                </h1>
-                <ul>
-                  <Link className={"hover:secondaryTextColor"}>
-                    <li>My Account</li>
-                  </Link>
-                  <Link className={"hover:secondaryTextColor"}>
-                    <li>My Orders</li>
-                  </Link>
-                  <Link className={"hover:secondaryTextColor"}>
-                    <li>My Wishlist</li>
-                  </Link>
-                  <Link className={"hover:secondaryTextColor"}>
-                    <li>Payment History</li>
-                  </Link>
-                  <Link className={"hover:secondaryTextColor"}>
-                    <li>Support Tickets</li>
-                  </Link>
-                  <Link className={"hover:secondaryTextColor"}>
-                    <li>Promo/Coupons</li>
-                  </Link>
-                  <Link className={"hover:secondaryTextColor"}>
-                    {user ? (
-                      <li
-                        className={"cursor-pointer hover:secondaryTextColor"}
-                        onClick={handleLogout}
-                      >
-                        Logout
-                      </li>
-                    ) : (
-                      <li className={"hover:secondaryTextColor"}>Login</li>
-                    )}
-                  </Link>
-                </ul>
-              </div>
-              <div className={"col-span-2 relative"}>
+              <div className={"col-span-3 relative"}>
                 <h1 className={"mb-3"}>
                   Quick Links
                   <span className="absolute left-0 top-6 w-15 border-b-2 border-gray-300 mt-1"></span>
@@ -283,7 +224,10 @@ const Footer = () => {
                   >
                     <li>Privacy Policy</li>
                   </Link>
-                  <Link to="/refundpolicy" className={"hover:secondaryTextColor"}>
+                  <Link
+                    to="/refundpolicy"
+                    className={"hover:secondaryTextColor"}
+                  >
                     <li>Refund Policy</li>
                   </Link>
                   <Link
