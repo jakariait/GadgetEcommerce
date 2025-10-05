@@ -46,7 +46,7 @@ const ProductByFlag = () => {
           <div key={flag} className={"mb-5"}>
             <div className="flex items-center gap-4 my-6">
               <div className="flex-grow h-px bg-gray-400"></div>
-              <h2 className="text-lg pl-10 pr-10 font-bold text-gray-800 whitespace-nowrap uppercase tracking-widest">
+              <h2 className="text-lg pl-10 pr-10 font-bold secondaryTextColor whitespace-nowrap uppercase tracking-widest">
                 {flag}
               </h2>
               <div className="flex-grow h-px bg-gray-400"></div>

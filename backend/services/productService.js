@@ -397,14 +397,18 @@ const getAllProducts = async ({
 };
 
 const updateProduct = async (productId, updatedData, files) => {
-	try {
-		// 1. Find the existing product
-		const product = await ProductModel.findOne({ productId });
-		if (!product) {
-			throw new Error("Product not found");
-		}
+  try {
 
-		// --- IMAGE HANDLING START ---
+    // Validate if productId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      throw new Error("Invalid Product ID format");
+    }
+
+    // 1. Find the existing product by its MongoDB _id
+    const product = await ProductModel.findById(productId); // Use findById for MongoDB _id
+    if (!product) {
+      throw new Error("Product not found");
+    }		// --- IMAGE HANDLING START ---
 		// Handle thumbnail image update (only if a new file is uploaded)
 		if (files && files.thumbnailImage && files.thumbnailImage.length > 0) {
 			product.thumbnailImage = files.thumbnailImage[0].filename;
@@ -516,20 +520,19 @@ const updateProduct = async (productId, updatedData, files) => {
 		await product.save();
 
 		return product;
-	} catch (error) {
-		console.error("Update failed:", {
-			error: error.message,
-			inputVariants: updatedData.variants,
-			existingVariants: product?.variants?.map((v) => ({
-				_id: v._id,
-				size: v.size._id,
-				price: v.price,
-				stock: v.stock,
-			})),
-		});
-		throw new Error(`Update failed: ${error.message}`);
-	}
-};
+	  } catch (error) {
+	    console.error("Update failed:", {
+	      error: error.message,
+	      inputVariants: updatedData.variants,
+	      existingVariants: product ? product.variants?.map((v) => ({ // Conditionally access product.variants
+	        _id: v._id,
+	        size: v.size._id,
+	        price: v.price,
+	        stock: v.stock,
+	      })) : undefined, // If product is null, set existingVariants to undefined
+	    });
+	    throw new Error(`Update failed: ${error.message}`);
+	  }};
 
 
 // Similar Products for product details page
