@@ -33,7 +33,7 @@ const bkashConfigController = require("../controllers/bkashConfigController");
 const SteadfastConfigController = require("../controllers/SteadfastConfigController");
 const blogController = require("../controllers/BlogController");
 const PassWordResetController = require("../controllers/PassWordResetController");
-const brandRoutes = require("./brandRoutes");
+const brandController = require("../controllers/brandController");
 
 const { handleCourierCheck } = require("../controllers/courierController");
 const {
@@ -99,6 +99,10 @@ const upload = multer({ storage }).fields([
   },
   {
     name: "userImage",
+    maxCount: 1,
+  },
+  {
+    name: "logo",
     maxCount: 1,
   },
 ]);
@@ -369,7 +373,29 @@ router.delete(
 );
 
 // Brand Routes
-router.use("/brands", brandRoutes);
+router.post(
+  "/brands",
+  adminProtect,
+  checkPermission("brand"),
+  upload,
+  brandController.createBrand,
+);
+router.get("/brands", brandController.getBrands);
+router.get("/brands/slug/:slug", brandController.getBrandBySlug);
+router.get("/brands/:id", brandController.getBrandById);
+router.put(
+  "/brands/:id",
+  adminProtect,
+  checkPermission("brand"),
+  upload,
+  brandController.updateBrand,
+);
+router.delete(
+  "/brands/:id",
+  adminProtect,
+  checkPermission("brand"),
+  brandController.deleteBrand,
+);
 
 // Product Size Routes
 router.get("/product-sizes", productSizeController.getAllProductSizes);

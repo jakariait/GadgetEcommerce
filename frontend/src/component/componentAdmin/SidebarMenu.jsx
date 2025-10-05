@@ -118,6 +118,14 @@ export default function SidebarMenu() {
               </li>
             </Link>
           </RequirePermission>
+
+          <RequirePermission permission="brand" fallback={true}>
+            <Link to="/admin/brands">
+              <li className="flex items-center space-x-2 p-2 rounded-md cursor-pointer">
+                <FaSearch /> <span>Brand</span>
+              </li>
+            </Link>
+          </RequirePermission>
         </ul>
       </div>
 

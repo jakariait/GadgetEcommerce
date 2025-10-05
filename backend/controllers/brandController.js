@@ -8,8 +8,8 @@ const createBrand = async (req, res) => {
         const { name } = req.body;
         const brandData = { name };
 
-        if (req.file) {
-            brandData.logo = req.file.filename;
+        if (req.files && req.files.logo) {
+            brandData.logo = req.files.logo[0].filename;
         }
 
         const brand = await brandService.createBrand(brandData);
@@ -57,7 +57,7 @@ const updateBrand = async (req, res) => {
             return res.status(404).json({ message: "Brand not found" });
         }
 
-        if (req.file) {
+        if (req.files && req.files.logo) {
             // If a new logo is uploaded, delete the old one
             if (existingBrand.logo) {
                 const oldLogoPath = path.join(__dirname, '..', 'uploads', existingBrand.logo);
@@ -65,7 +65,7 @@ const updateBrand = async (req, res) => {
                     fs.unlinkSync(oldLogoPath);
                 }
             }
-            brandData.logo = req.file.filename;
+            brandData.logo = req.files.logo[0].filename;
         }
 
         const brand = await brandService.updateBrand(id, brandData);
