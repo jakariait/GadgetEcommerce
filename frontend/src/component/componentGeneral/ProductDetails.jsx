@@ -273,8 +273,6 @@ const ProductDetails = () => {
                 </div>
               )}
 
-              {/*Short Description*/}
-              {product.shortDesc && <div>{product.shortDesc}</div>}
             </div>
           </div>
 

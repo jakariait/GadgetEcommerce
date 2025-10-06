@@ -409,7 +409,8 @@ const ProductForm = ({ isEditMode = false }) => {
     if (selectedCategory) formData.append("category", selectedCategory);
     if (selectedSubCategory)
       formData.append("subCategory", selectedSubCategory);
-    if (selectedChildCategory) formData.append("childCategory", selectedChildCategory);
+    if (selectedChildCategory)
+      formData.append("childCategory", selectedChildCategory);
     if (selectedBrand) formData.append("brand", selectedBrand); // Append selected brand
 
     selectedFlags.forEach((flag) => formData.append("flags", flag));
@@ -440,28 +441,42 @@ const ProductForm = ({ isEditMode = false }) => {
       }
     });
 
-    if (hasVariant && variants.length > 0) {
-      variants.forEach((variant, index) => {
-        if (!variant.size || !variant.stock || !variant.price) {
-          return;
-        }
-        Object.keys(variant).forEach((key) => {
-          formData.append(`variants[${index}][${key}]`, variant[key]);
+    if (hasVariant) {
+      const processedVariants = variants.filter(
+        (variant) =>
+          variant.size &&
+          variant.price &&
+          variant.stock !== "" &&
+          variant.stock != null,
+      );
+
+      if (processedVariants.length > 0) {
+        processedVariants.forEach((variant, index) => {
+          Object.keys(variant).forEach((key) => {
+            formData.append(`variants[${index}][${key}]`, variant[key]);
+          });
         });
-      });
-    } else if (!hasVariant) {
+      } else {
+        formData.append("variants", JSON.stringify([]));
+      }
+    } else {
       formData.append("variants", JSON.stringify([]));
     }
-console.log(product);
+    console.log(product);
     try {
       let response;
       if (isEditMode) {
-        response = await axios.put(`${apiUrl}/products/${product._id}`, formData, { // Use product._id here
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
+        response = await axios.put(
+          `${apiUrl}/products/${product._id}`,
+          formData,
+          {
+            // Use product._id here
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
           },
-        });
+        );
         setSnackbarMessage("Product updated successfully!");
       } else {
         response = await axios.post(`${apiUrl}/products`, formData, {
@@ -588,14 +603,12 @@ console.log(product);
             />
 
             {/* Short Description */}
-            <TextField
-              label="Short Description"
-              fullWidth
+
+            <h1 className={"py-3 pl-1"}>Short Description</h1>
+            <Editor
               value={shortDesc}
-              onChange={(e) => setShortDesc(e.target.value)}
-              margin="normal"
-              multiline
-              rows={3}
+              onTextChange={(e) => setShortDesc(e.htmlValue)}
+              style={{ height: "260px" }}
             />
 
             {/* Long Description */}

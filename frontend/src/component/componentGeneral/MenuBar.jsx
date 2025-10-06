@@ -38,7 +38,7 @@ const MenuBar = () => {
 
   return (
     <div className="shadow-xs items-center justify-center  flex lg:bg-white">
-      <nav className="p-3 xl:container xl:mx-auto">
+      <nav className=" xl:container xl:mx-auto">
         <ul className="lg:flex">
           <MenuItem
             label={

@@ -84,6 +84,17 @@ const ProductAddToCart = ({ product }) => {
     setSelectedVariant(newVariant);
   };
 
+  // Function to sanitize/remove editor-specific tags like ql-ui
+  const cleanHtml = (html) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    // Remove Quill editor-only UI elements
+    doc.querySelectorAll(".ql-ui").forEach((el) => el.remove());
+
+    return doc.body.innerHTML;
+  };
+
   return (
     <div>
       <div>
@@ -146,6 +157,17 @@ const ProductAddToCart = ({ product }) => {
               )}
             </div>
           )}
+
+          {/*Short Description*/}
+          {product.shortDesc && (
+            <div
+              className="rendered-html"
+              dangerouslySetInnerHTML={{
+                __html: cleanHtml(product.shortDesc),
+              }}
+            />
+          )}
+
 
           {/* Reward Points */}
           {product.rewardPoints && (
