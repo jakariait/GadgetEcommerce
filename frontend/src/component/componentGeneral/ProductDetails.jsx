@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link as RouterLink, useLocation, useParams } from "react-router-dom";
 import useProductStore from "../../store/useProductStore.js";
 import GeneralInfoStore from "../../store/GeneralInfoStore.js";
@@ -26,6 +26,7 @@ import ProductAddToCart from "./ProductAddToCart.jsx";
 import axios from "axios";
 import SimilarProducts from "./SimilarProducts.jsx";
 import YouTubeEmbed from "./YouTubeEmbed.jsx";
+import ImageComponent from "./ImageComponent.jsx";
 
 const ProductDetails = () => {
   const hasPushedRef = useRef(false);
@@ -116,9 +117,6 @@ const ProductDetails = () => {
 
     hasPushedRef.current = true;
   }, [product]);
-
-
-
 
   // If product is loading, show a loading screen
   if (loading || product?.slug !== slug) {
@@ -239,14 +237,14 @@ const ProductDetails = () => {
             </Breadcrumbs>
           </div>
 
-          <div className="md:grid md:grid-cols-8 lg:grid-cols-9 xl:grid-cols-9 gap-8">
-            <div className="md:col-span-4 lg:col-span-6 xl:col-span-5 relative">
+          <div className="md:grid md:grid-cols-8  gap-8">
+            <div className="md:col-span-3  relative">
               <ProductGallery
                 images={product.images}
                 discount={discountPercentage}
               />
             </div>
-            <div className="flex flex-col gap-3 md:col-span-4 lg:col-span-3 xl:col-span-4 pt-4 md:pt-0">
+            <div className="flex flex-col gap-3 md:col-span-5  pt-4 md:pt-0">
               <ProductAddToCart product={product} />
 
               {/*Social Share Buttons*/}
@@ -267,6 +265,7 @@ const ProductDetails = () => {
                   </WhatsappShareButton>
                 </div>
               </div>
+
               {/*Product Code*/}
               {product.productCode && (
                 <div>

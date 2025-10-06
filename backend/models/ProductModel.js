@@ -79,6 +79,7 @@ const productSchema = new mongoose.Schema(
     brand: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Brand",
+      required: true,
     },
 
     flags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Flag" }],

@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import useCartStore from "../../store/useCartStore.js";
 import LiveStatsNotification from "./LiveStatsNotification.jsx";
+import ImageComponent from "./ImageComponent.jsx";
+import ProductBrand from "./ProductBrand.jsx";
 
 const ProductAddToCart = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
@@ -86,7 +88,11 @@ const ProductAddToCart = ({ product }) => {
     <div>
       <div>
         <div className="flex flex-col gap-3 md:col-span-4 lg:col-span-3 xl:col-span-4 pt-4 md:pt-0">
-          <LiveStatsNotification />
+          {/*<LiveStatsNotification />*/}
+
+          {/* Product Brand Section */}
+          <ProductBrand product={product} />
+
           <h2 className="text-xl">{product.name}</h2>
 
           {/* Without Variant Price Display */}
@@ -210,18 +216,12 @@ const ProductAddToCart = ({ product }) => {
                 Stock Out
               </button>
             ) : (
-              <motion.button
+              <button
                 className="primaryBgColor accentTextColor px-2 py-1 md:py-2 rounded flex-grow cursor-pointer"
-                animate={{ scale: [1, 1.08, 1] }} // Scale animation
-                transition={{
-                  duration: 2.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
                 onClick={handleAddToCart}
               >
                 ADD TO CART
-              </motion.button>
+              </button>
             )}
           </div>
           {/*Cash On Delivery Order Button*/}
@@ -230,21 +230,15 @@ const ProductAddToCart = ({ product }) => {
               Stock Out
             </button>
           ) : (
-            <motion.button
+            <button
               className="primaryBgColor accentTextColor px-2 py-1 md:py-2 rounded cursor-pointer"
-              animate={{ scale: [1, 1.05, 1] }} // Scale animation
-              transition={{
-                duration: 2.5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
               onClick={() => {
                 addToCart(product, quantity, selectedVariant);
                 navigate("/checkout");
               }}
             >
               Order with Cash on Delivery
-            </motion.button>
+            </button>
           )}
         </div>
       </div>

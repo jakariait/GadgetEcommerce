@@ -28,6 +28,7 @@ const getProducts = async () => {
 				{ path: "category", select: "-createdAt -updatedAt" },
 				{ path: "subCategory", select: "-createdAt -updatedAt" },
 				{ path: "childCategory", select: "-createdAt -updatedAt" },
+				{ path: "brand", select: "-createdAt -updatedAt" },
 				{ path: "flags", select: "-createdAt -updatedAt" },
 				{ path: "variants", select: "-createdAt -updatedAt" },
 				{ path: "variants.size", select: "-createdAt -updatedAt" }, // If size is nested
@@ -48,6 +49,7 @@ const getProductById = async (productId) => {
 			{ path: "category", select: "-createdAt -updatedAt" },
 			{ path: "subCategory", select: "-createdAt -updatedAt" },
 			{ path: "childCategory", select: "-createdAt -updatedAt" },
+			{ path: "brand", select: "-createdAt -updatedAt" },
 			{ path: "flags", select: "-createdAt -updatedAt" },
 			{ path: "variants", select: "-createdAt -updatedAt" },
 			{ path: "variants.size", select: "-createdAt -updatedAt" }, // If size is nested
@@ -67,6 +69,7 @@ const getProductBySlug = async (slug) => {
 			{ path: "category", select: "-createdAt -updatedAt" },
 			{ path: "subCategory", select: "-createdAt -updatedAt" },
 			{ path: "childCategory", select: "-createdAt -updatedAt" },
+			{ path: "brand", select: "-createdAt -updatedAt" },
 			{ path: "flags", select: "-createdAt -updatedAt" },
 			{ path: "variants", select: "-createdAt -updatedAt" },
 			{ path: "variants.size", select: "-createdAt -updatedAt" }, // If size is nested

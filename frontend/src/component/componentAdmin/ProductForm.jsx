@@ -367,6 +367,7 @@ const ProductForm = ({ isEditMode = false }) => {
     let validationErrors = {};
     if (!name.trim()) validationErrors.name = "Product name is required.";
     if (!selectedCategory) validationErrors.category = "Category is required.";
+    if (!selectedBrand) validationErrors.brand = "Brand is required.";
 
     // Thumbnail image validation
     if (!imagePreview && !isEditMode) {
