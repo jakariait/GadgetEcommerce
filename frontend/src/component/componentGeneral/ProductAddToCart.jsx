@@ -104,60 +104,72 @@ const ProductAddToCart = ({ product }) => {
           {/* Product Brand Section */}
           <ProductBrand product={product} />
 
-          <h2 className="text-xl">{product.name}</h2>
+          <h2 className="text-2xl md:text-3xl secondaryTextColor ">
+            {product.name}
+          </h2>
 
-          {/* Without Variant Price Display */}
-          {!product.variants?.length && (
-            <div className="flex gap-2 items-center">
-              {product.finalDiscount > 0 ? (
-                <>
-                  <div className="line-through">
+          <div className="flex text-lg gap-4 justify-between ">
+            {/* Without Variant Price Display */}
+            {!product.variants?.length && (
+              <div className="flex gap-2 items-center bg-gray-100 px-2 py-1 rounded-lg">
+                {product.finalDiscount > 0 ? (
+                  <>
+                    <div className="line-through">
+                      Tk. {formatPrice(Number(product.finalPrice))}
+                    </div>
+                    <div className="text-red-800">
+                      Tk. {formatPrice(Number(product.finalDiscount))}
+                    </div>
+                    <div>
+                      You Save: Tk{" "}
+                      {formatPrice(
+                        Number(product.finalPrice - product.finalDiscount),
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-black font-medium">
                     Tk. {formatPrice(Number(product.finalPrice))}
                   </div>
-                  <div className="text-red-800">
-                    Tk. {formatPrice(Number(product.finalDiscount))}
-                  </div>
-                  <div>
-                    You Save: Tk{" "}
-                    {formatPrice(
-                      Number(product.finalPrice - product.finalDiscount),
-                    )}
-                  </div>
-                </>
-              ) : (
-                <div className="text-black font-medium">
-                  Tk. {formatPrice(Number(product.finalPrice))}
-                </div>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
 
-          {/*With Variant Price Display */}
-          {selectedVariant && (
-            <div className="flex gap-2">
-              {selectedVariant.discount > 0 ? (
-                <>
-                  <div className="line-through">
+            {/*With Variant Price Display */}
+            {selectedVariant && (
+              <div className="flex gap-2 bg-gray-100 px-2 py-1 rounded-lg">
+                {selectedVariant.discount > 0 ? (
+                  <>
+                    <div className="line-through">
+                      Tk. {formatPrice(Number(selectedVariant.price))}
+                    </div>
+                    <div className="text-red-800">
+                      Tk. {formatPrice(Number(selectedVariant.discount))}
+                    </div>
+                    <div>
+                      You Save: Tk{" "}
+                      {formatPrice(
+                        Number(
+                          selectedVariant.price - selectedVariant.discount,
+                        ),
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-black">
                     Tk. {formatPrice(Number(selectedVariant.price))}
                   </div>
-                  <div className="text-red-800">
-                    Tk. {formatPrice(Number(selectedVariant.discount))}
-                  </div>
-                  <div>
-                    You Save: Tk{" "}
-                    {formatPrice(
-                      Number(selectedVariant.price - selectedVariant.discount),
-                    )}
-                  </div>
-                </>
-              ) : (
-                <div className="text-black">
-                  Tk. {formatPrice(Number(selectedVariant.price))}
-                </div>
-              )}
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Reward Points */}
+          {product.rewardPoints && (
+            <div className={"bg-gray-100 w-fit px-2 py-1 rounded-lg"}>
+              Purchase & Earn: {product.rewardPoints} points.
             </div>
           )}
-
           {/*Short Description*/}
           {product.shortDesc && (
             <div
@@ -166,12 +178,6 @@ const ProductAddToCart = ({ product }) => {
                 __html: cleanHtml(product.shortDesc),
               }}
             />
-          )}
-
-
-          {/* Reward Points */}
-          {product.rewardPoints && (
-            <div>Purchase & Earn: {product.rewardPoints} points.</div>
           )}
 
           {/* With Variant Price Display */}
@@ -239,29 +245,33 @@ const ProductAddToCart = ({ product }) => {
               </button>
             ) : (
               <button
-                className="primaryBgColor accentTextColor px-2 py-1 md:py-2 rounded flex-grow cursor-pointer"
+                className="primaryBgColor accentTextColor px-2 py-1 md:py-2 rounded w-44 cursor-pointer"
                 onClick={handleAddToCart}
               >
                 ADD TO CART
               </button>
             )}
+
+            {/*Cash On Delivery Order Button*/}
+            {selectedVariant?.stock === 0 || product.finalStock === 0 ? (
+              <button
+                className="text-red-600  font-semibold w-full mt-2"
+                disabled
+              >
+                Stock Out
+              </button>
+            ) : (
+              <button
+                className="primaryBgColor w-44 accentTextColor px-2 py-1 md:py-2 rounded cursor-pointer"
+                onClick={() => {
+                  addToCart(product, quantity, selectedVariant);
+                  navigate("/checkout");
+                }}
+              >
+                BUY NOW
+              </button>
+            )}
           </div>
-          {/*Cash On Delivery Order Button*/}
-          {selectedVariant?.stock === 0 || product.finalStock === 0 ? (
-            <button className="text-red-600 font-semibold w-full mt-2" disabled>
-              Stock Out
-            </button>
-          ) : (
-            <button
-              className="primaryBgColor accentTextColor px-2 py-1 md:py-2 rounded cursor-pointer"
-              onClick={() => {
-                addToCart(product, quantity, selectedVariant);
-                navigate("/checkout");
-              }}
-            >
-              Order with Cash on Delivery
-            </button>
-          )}
         </div>
       </div>
     </div>

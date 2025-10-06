@@ -237,42 +237,47 @@ const ProductDetails = () => {
             </Breadcrumbs>
           </div>
 
-          <div className="md:grid md:grid-cols-8  gap-8">
-            <div className="md:col-span-3  relative">
+          <div className="md:grid md:grid-cols-8 lg:grid-cols-8 gap-8">
+            <div className="md:col-span-3 lg:col-span-4 relative">
               <ProductGallery
                 images={product.images}
                 discount={discountPercentage}
               />
             </div>
-            <div className="flex flex-col gap-3 md:col-span-5  pt-4 md:pt-0">
+            <div className="flex flex-col gap-3 md:col-span-5 lg:col-span-4 pt-4 md:pt-0">
               <ProductAddToCart product={product} />
 
-              {/*Social Share Buttons*/}
-              <div className="flex  items-center gap-2">
-                <h1>Social Share:</h1>
-                <div className="flex gap-1">
-                  <FacebookShareButton url={url} quote={title}>
-                    <FacebookIcon size={28} round />
-                  </FacebookShareButton>
-                  <TwitterShareButton url={url} title={title}>
-                    <TwitterIcon size={28} round />
-                  </TwitterShareButton>
-                  <LinkedinShareButton url={url}>
-                    <LinkedinIcon size={28} round />
-                  </LinkedinShareButton>
-                  <WhatsappShareButton url={url} title={title} separator=" - ">
-                    <WhatsappIcon size={28} round />
-                  </WhatsappShareButton>
+              <div className={"flex gap-2 justify-between"}>
+                {/*Social Share Buttons*/}
+                <div className="flex  items-center gap-2">
+                  <h1>Social Share:</h1>
+                  <div className="flex gap-1">
+                    <FacebookShareButton url={url} quote={title}>
+                      <FacebookIcon size={28} round />
+                    </FacebookShareButton>
+                    <TwitterShareButton url={url} title={title}>
+                      <TwitterIcon size={28} round />
+                    </TwitterShareButton>
+                    <LinkedinShareButton url={url}>
+                      <LinkedinIcon size={28} round />
+                    </LinkedinShareButton>
+                    <WhatsappShareButton
+                      url={url}
+                      title={title}
+                      separator=" - "
+                    >
+                      <WhatsappIcon size={28} round />
+                    </WhatsappShareButton>
+                  </div>
                 </div>
+
+                {/*Product Code*/}
+                {product.productCode && (
+                  <div className={"bg-gray-100 w-fit px-2 py-1 rounded-lg"}>
+                    <strong>Product Code:</strong> {product.productCode}
+                  </div>
+                )}
               </div>
-
-              {/*Product Code*/}
-              {product.productCode && (
-                <div>
-                  <strong>Product Code:</strong> {product.productCode}
-                </div>
-              )}
-
             </div>
           </div>
 
@@ -283,101 +288,20 @@ const ProductDetails = () => {
             </div>
           )}
 
-          <div className={"xl:w-3/4 mx-auto shadow mt-4"}>
+          <div className={"xl:w-3/4 mx-auto shadow-xs rounded mt-4"}>
             {/*product Description*/}
             {product.longDesc && (
-              <Accordion
-                defaultExpanded
-                style={{
-                  background: "transparent",
-                  boxShadow: "none",
-                  width: "100%",
-                }}
-              >
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1-content"
-                  id="panel1-header"
-                  className="p-2 flex items-center"
-                >
-                  <Typography component="span">
-                    <div className="flex items-center gap-2">
-                      <span>Description</span>
-                    </div>
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <div
-                    className="rendered-html"
-                    dangerouslySetInnerHTML={{
-                      __html: cleanHtml(product.longDesc),
-                    }}
-                  />
-                </AccordionDetails>
-              </Accordion>
-            )}
-            {/*Product Size Chart*/}
-            {product.sizeChart && (
-              <Accordion
-                style={{
-                  background: "transparent",
-                  boxShadow: "none",
-                  width: "100%",
-                }}
-              >
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1-content"
-                  id="panel1-header"
-                  className="p-2 flex items-center"
-                >
-                  <Typography component="span">
-                    <div className="flex items-center gap-2">
-                      <span>Size Chart</span>
-                    </div>
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <div
-                    className="rendered-html"
-                    dangerouslySetInnerHTML={{
-                      __html: cleanHtml(product.sizeChart),
-                    }}
-                  />
-                </AccordionDetails>
-              </Accordion>
-            )}
-
-            {/*Shipping and Return*/}
-            {product.shippingReturn && (
-              <Accordion
-                style={{
-                  background: "transparent",
-                  boxShadow: "none",
-                  width: "100%",
-                }}
-              >
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1-content"
-                  id="panel1-header"
-                  className="p-2 flex items-center"
-                >
-                  <Typography component="span">
-                    <div className="flex items-center gap-2">
-                      <span>Shipping and Return</span>
-                    </div>
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <div
-                    className="rendered-html"
-                    dangerouslySetInnerHTML={{
-                      __html: cleanHtml(product.shippingReturn),
-                    }}
-                  />
-                </AccordionDetails>
-              </Accordion>
+              <div className={"p-3"}>
+                <span className={"text-2xl  secondaryTextColor"}>
+                  Description
+                </span>
+                <div
+                  className="rendered-html p-3"
+                  dangerouslySetInnerHTML={{
+                    __html: cleanHtml(product.longDesc),
+                  }}
+                />
+              </div>
             )}
           </div>
         </div>

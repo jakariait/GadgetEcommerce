@@ -56,8 +56,6 @@ const ProductForm = ({ isEditMode = false }) => {
   const [name, setName] = useState("");
   const [shortDesc, setShortDesc] = useState("");
   const [longDesc, setLongDesc] = useState("");
-  const [sizeChart, setSizeChart] = useState("");
-  const [shippingReturn, setShippingReturn] = useState("");
   const [productCode, setProductCode] = useState("");
   const [rewardPoints, setRewardPoints] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -119,8 +117,6 @@ const ProductForm = ({ isEditMode = false }) => {
       setName(product.name || "");
       setShortDesc(product.shortDesc || "");
       setLongDesc(product.longDesc || "");
-      setSizeChart(product.sizeChart || "");
-      setShippingReturn(product.shippingReturn || "");
       setProductCode(product.productCode || "");
       setRewardPoints(product.rewardPoints || "");
       setVideoUrl(product.videoUrl || "");
@@ -393,8 +389,6 @@ const ProductForm = ({ isEditMode = false }) => {
     formData.append("name", name);
     formData.append("shortDesc", shortDesc);
     formData.append("longDesc", longDesc);
-    formData.append("sizeChart", sizeChart);
-    formData.append("shippingReturn", shippingReturn);
     formData.append("productCode", productCode);
     formData.append("rewardPoints", rewardPoints);
     formData.append("videoUrl", videoUrl);
@@ -441,26 +435,20 @@ const ProductForm = ({ isEditMode = false }) => {
       }
     });
 
-    if (hasVariant) {
-      const processedVariants = variants.filter(
-        (variant) =>
-          variant.size &&
-          variant.price &&
-          variant.stock !== "" &&
-          variant.stock != null,
-      );
+    const processedVariants = variants.filter(
+      (variant) =>
+        variant.size &&
+        variant.price &&
+        variant.stock !== "" &&
+        variant.stock != null,
+    );
 
-      if (processedVariants.length > 0) {
-        processedVariants.forEach((variant, index) => {
-          Object.keys(variant).forEach((key) => {
-            formData.append(`variants[${index}][${key}]`, variant[key]);
-          });
+    if (hasVariant && processedVariants.length > 0) {
+      processedVariants.forEach((variant, index) => {
+        Object.keys(variant).forEach((key) => {
+          formData.append(`variants[${index}][${key}]`, variant[key]);
         });
-      } else {
-        formData.append("variants", JSON.stringify([]));
-      }
-    } else {
-      formData.append("variants", JSON.stringify([]));
+      });
     }
     console.log(product);
     try {
@@ -495,8 +483,6 @@ const ProductForm = ({ isEditMode = false }) => {
         setName("");
         setShortDesc("");
         setLongDesc("");
-        setSizeChart("");
-        setShippingReturn("");
         setProductCode("");
         setRewardPoints("");
         setVideoUrl("");
@@ -618,26 +604,7 @@ const ProductForm = ({ isEditMode = false }) => {
               onTextChange={(e) => setLongDesc(e.htmlValue)}
               style={{ height: "260px" }}
             />
-            {/* Size Chart */}
-            <div>
-              <h1 className={"py-3 pl-1"}>Size Chart</h1>
 
-              <Editor
-                value={sizeChart}
-                onTextChange={(e) => setSizeChart(e.htmlValue)}
-                style={{ height: "260px" }}
-              />
-            </div>
-            {/* Shipping and Return */}
-            <div>
-              <h1 className={"py-3 pl-1"}>Shipping and Return</h1>
-
-              <Editor
-                value={shippingReturn}
-                onTextChange={(e) => setShippingReturn(e.htmlValue)}
-                style={{ height: "260px" }}
-              />
-            </div>
             {/* Search Tag Input */}
             <Box mb={2}>
               <Box

@@ -50,8 +50,6 @@ const productSchema = new mongoose.Schema(
     slug: { type: String, trim: true, unique: true }, // Auto-generated
     shortDesc: { type: String, trim: true },
     longDesc: { type: String, trim: true },
-    sizeChart: { type: String, trim: true },
-    shippingReturn: { type: String, trim: true },
     productCode: { type: String, trim: true },
 
     rewardPoints: {
