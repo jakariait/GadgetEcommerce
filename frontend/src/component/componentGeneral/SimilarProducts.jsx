@@ -38,11 +38,14 @@ const SimilarProducts = ({ categoryId, productId }) => {
 
   return (
     <div>
-      <div className={"xl:container xl:mx-auto md:p-3 mt-4"}>
-        <h1 className={"text-3xl primaryTextColor"}>You may also like</h1>
-        <ProductList products={similarProducts} />
+      <div className={"px-2 shadow-lg rounded-lg"}>
+        <h1
+          className={"text-2xl primaryTextColor text-center secondaryTextColor"}
+        >
+          Related Products
+        </h1>
+        <ProductList products={similarProducts} productPage={true} />
       </div>
-
     </div>
   );
 };

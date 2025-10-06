@@ -27,9 +27,21 @@ import axios from "axios";
 import SimilarProducts from "./SimilarProducts.jsx";
 import YouTubeEmbed from "./YouTubeEmbed.jsx";
 import ImageComponent from "./ImageComponent.jsx";
+import Specification from "./Specification.jsx";
 
 const ProductDetails = () => {
   const hasPushedRef = useRef(false);
+  const specRef = useRef(null);
+  const descRef = useRef(null);
+
+  const handleScroll = (ref) => {
+    if (ref.current) {
+      const yOffset = -140; // Offset for fixed header
+      const y =
+        ref.current.getBoundingClientRect().top + window.scrollY + yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  };
 
   const { fetchProductBySlug, product, loading, error, resetProduct } =
     useProductStore();
@@ -270,13 +282,6 @@ const ProductDetails = () => {
                     </WhatsappShareButton>
                   </div>
                 </div>
-
-                {/*Product Code*/}
-                {product.productCode && (
-                  <div className={"bg-gray-100 w-fit px-2 py-1 rounded-lg"}>
-                    <strong>Product Code:</strong> {product.productCode}
-                  </div>
-                )}
               </div>
             </div>
           </div>
@@ -288,30 +293,55 @@ const ProductDetails = () => {
             </div>
           )}
 
-          <div className={"xl:w-3/4 mx-auto shadow-xs rounded mt-4"}>
-            {/*product Description*/}
-            {product.longDesc && (
-              <div className={"p-3"}>
-                <span className={"text-2xl  secondaryTextColor"}>
-                  Description
-                </span>
-                <div
-                  className="rendered-html p-3"
-                  dangerouslySetInnerHTML={{
-                    __html: cleanHtml(product.longDesc),
-                  }}
-                />
+          <div className="flex gap-4 my-4 bg-gray-100 px-2 py-2">
+            <button
+              onClick={() => handleScroll(specRef)}
+              className="px-4 py-2 secondaryBgColor text-white rounded-md  transition text-lg font-semibold cursor-pointer"
+            >
+              Specification
+            </button>
+            <button
+              onClick={() => handleScroll(descRef)}
+              className="px-4 py-2  rounded-md bg-white secondaryTextColor transition text-lg font-semibold cursor-pointer"
+            >
+              Description
+            </button>
+          </div>
+
+          <div className={"md:grid gap-4 grid-cols-5"}>
+            <div className={"col-span-3"}>
+              {/*Specification*/}
+              <div ref={specRef}>
+                <Specification product={product} />
               </div>
-            )}
+
+              <div ref={descRef} className={" shadow-sm rounded-lg mt-4"}>
+                {/*product Description*/}
+                {product.longDesc && (
+                  <div className={"p-3"}>
+                    <span className={"text-2xl  secondaryTextColor"}>
+                      Description
+                    </span>
+                    <div
+                      className="rendered-html p-3"
+                      dangerouslySetInnerHTML={{
+                        __html: cleanHtml(product.longDesc),
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className={"col-span-2"}>
+              <SimilarProducts
+                categoryId={product?.category?._id}
+                productId={product?._id}
+              />
+            </div>
           </div>
         </div>
       )}
-      <div>
-        <SimilarProducts
-          categoryId={product?.category?._id}
-          productId={product?._id}
-        />
-      </div>
     </div>
   );
 };

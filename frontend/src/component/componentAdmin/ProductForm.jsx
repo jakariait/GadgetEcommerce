@@ -85,6 +85,9 @@ const ProductForm = ({ isEditMode = false }) => {
     { size: "", stock: "", price: "", discount: "" },
   ]);
   const [isActive, setIsActive] = useState("true"); // Default to active for new products
+  const [specification, setSpecification] = useState([
+    { title: "", specs: [{ label: "", value: "" }] },
+  ]);
 
   // State specific to update mode
   const [existingImages, setExistingImages] = useState([]); // Array of image names (strings) from backend
@@ -178,6 +181,12 @@ const ProductForm = ({ isEditMode = false }) => {
       } else {
         setVariants([{ size: "", stock: "", price: "", discount: "" }]); // Ensure at least one empty variant for input
         setHasVariant(false);
+      }
+
+      if (product.specification && product.specification.length > 0) {
+        setSpecification(product.specification);
+      } else {
+        setSpecification([{ title: "", specs: [{ label: "", value: "" }] }]);
       }
     }
   }, [isEditMode, product, subCategories, childCategories, apiUrl]);
@@ -351,6 +360,43 @@ const ProductForm = ({ isEditMode = false }) => {
     );
   };
 
+  const handleSpecTitleChange = (e, index) => {
+    const newSpecification = [...specification];
+    newSpecification[index].title = e.target.value;
+    setSpecification(newSpecification);
+  };
+
+  const removeSpecTitle = (index) => {
+    const newSpecification = [...specification];
+    newSpecification.splice(index, 1);
+    setSpecification(newSpecification);
+  };
+
+  const addSpecTitle = () => {
+    setSpecification([
+      ...specification,
+      { title: "", specs: [{ label: "", value: "" }] },
+    ]);
+  };
+
+  const handleSpecChange = (e, titleIndex, specIndex, field) => {
+    const newSpecification = [...specification];
+    newSpecification[titleIndex].specs[specIndex][field] = e.target.value;
+    setSpecification(newSpecification);
+  };
+
+  const removeSpec = (titleIndex, specIndex) => {
+    const newSpecification = [...specification];
+    newSpecification[titleIndex].specs.splice(specIndex, 1);
+    setSpecification(newSpecification);
+  };
+
+  const addSpec = (titleIndex) => {
+    const newSpecification = [...specification];
+    newSpecification[titleIndex].specs.push({ label: "", value: "" });
+    setSpecification(newSpecification);
+  };
+
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
@@ -450,6 +496,23 @@ const ProductForm = ({ isEditMode = false }) => {
         });
       });
     }
+
+    const processedSpecifications = specification.filter(
+      (spec) =>
+        spec.title &&
+        spec.title.trim() !== "" &&
+        spec.specs.length > 0 &&
+        spec.specs.some(
+          (s) =>
+            (s.label && s.label.trim() !== "") ||
+            (s.value && s.value.trim() !== ""),
+        ),
+    );
+
+    if (processedSpecifications.length > 0) {
+      formData.append("specification", JSON.stringify(processedSpecifications));
+    }
+
     console.log(product);
     try {
       let response;
@@ -505,6 +568,7 @@ const ProductForm = ({ isEditMode = false }) => {
         setVariants([{ size: "", stock: "", price: "", discount: "" }]);
         setHasVariant(true);
         setIsActive("true");
+        setSpecification([{ title: "", specs: [{ label: "", value: "" }] }]);
 
         if (fileInputRef.current) fileInputRef.current.value = "";
         if (imagesInputRef.current) imagesInputRef.current.value = "";
@@ -604,6 +668,81 @@ const ProductForm = ({ isEditMode = false }) => {
               onTextChange={(e) => setLongDesc(e.htmlValue)}
               style={{ height: "260px" }}
             />
+
+            {/* Specification Section */}
+            <div className={"shadow rounded-lg"}>
+              <Box mt={4} p={2}  borderRadius={2}>
+                <Typography variant="h6" mb={2}>
+                  Specification
+                </Typography>
+                {specification.map((specTitle, titleIndex) => (
+                  <Box key={titleIndex} p={2}  borderRadius={2} mb={2}>
+                    <Box display="flex" alignItems="center" gap={2}>
+                      <TextField
+                        label="Title"
+                        fullWidth
+                        value={specTitle.title}
+                        onChange={(e) => handleSpecTitleChange(e, titleIndex)}
+                      />
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={() => removeSpecTitle(titleIndex)}
+                      >
+                        Remove
+                      </Button>
+                    </Box>
+                    {specTitle.specs.map((spec, specIndex) => (
+                      <Box
+                        key={specIndex}
+                        display="flex"
+                        alignItems="center"
+                        gap={2}
+                        mt={2}
+                      >
+                        <TextField
+                          label="Label"
+                          value={spec.label}
+                          onChange={(e) =>
+                            handleSpecChange(e, titleIndex, specIndex, "label")
+                          }
+                        />
+                        <TextField
+                          label="Value"
+                          value={spec.value}
+                          onChange={(e) =>
+                            handleSpecChange(e, titleIndex, specIndex, "value")
+                          }
+                        />
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          size="small"
+                          onClick={() => removeSpec(titleIndex, specIndex)}
+                        >
+                          <DeleteIcon />
+                        </Button>
+                      </Box>
+                    ))}
+                    <Button
+                      variant="contained"
+                      onClick={() => addSpec(titleIndex)}
+                      sx={{ mt: 2 }}
+                    >
+                      Add Spec
+                    </Button>
+                  </Box>
+                ))}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={addSpecTitle}
+                >
+                  + Add Specification Title
+                </Button>
+              </Box>
+            </div>
+
 
             {/* Search Tag Input */}
             <Box mb={2}>

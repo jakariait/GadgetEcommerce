@@ -411,7 +411,18 @@ const updateProduct = async (productId, updatedData, files) => {
     const product = await ProductModel.findById(productId); // Use findById for MongoDB _id
     if (!product) {
       throw new Error("Product not found");
-    }		// --- IMAGE HANDLING START ---
+    }
+
+    // Parse specification if it's a JSON string
+    if (updatedData.specification && typeof updatedData.specification === 'string') {
+      try {
+        updatedData.specification = JSON.parse(updatedData.specification);
+      } catch (e) {
+        throw new Error("Invalid specification format. Expected a valid JSON string.");
+      }
+    }
+
+		// --- IMAGE HANDLING START ---
 		// Handle thumbnail image update (only if a new file is uploaded)
 		if (files && files.thumbnailImage && files.thumbnailImage.length > 0) {
 			product.thumbnailImage = files.thumbnailImage[0].filename;

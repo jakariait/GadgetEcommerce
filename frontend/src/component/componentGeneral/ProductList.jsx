@@ -12,11 +12,12 @@ const formatPrice = (price) => {
   return price.toLocaleString();
 };
 
-const ProductList = ( {products}) => {
+const ProductList = ( {products, productPage}) => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const handleOpen = (product) => {
     setSelectedProduct(product);
   };
+
 
   const handleClose = () => {
     setSelectedProduct(null);
@@ -46,13 +47,105 @@ const ProductList = ( {products}) => {
         </Typography>
       ) : (
         <div
-          className={
-            "grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 mt-4"
-          }
+          className={productPage ? "grid grid-cols-1 gap-3 mt-4" : "grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 mt-4"}
         >
           {/*Product Display Section*/}
-          {products
-            .map((product) => (
+          {products.map((product) =>
+            productPage ? (
+              // List View
+              <div
+                key={product.slug}
+                className="relative flex gap-4 items-center  p-2 rounded-md shadow-sm"
+              >
+                <div className="w-1/3">
+                  <Link to={`/product/${product.slug}`}>
+                    <ImageComponent
+                      imageName={product.thumbnailImage}
+                      altName={product.name}
+                      skeletonHeight={120}
+                    />
+                  </Link>
+                </div>
+                <div >
+                  <Link to={`/product/${product.slug}`}>
+                    <div className=" font-semibold hover:underline mb-2">
+                      {product.name}
+                    </div>
+                  </Link>
+                  <div className="flex gap-2 items-center">
+                    {/*Base Price*/}
+                    {product.variants?.length ? (
+                      product.variants[0].discount > 0 ? (
+                        <div className="line-through text-gray-500">
+                          Tk. {formatPrice(Number(product.variants[0].price))}
+                        </div>
+                      ) : (
+                        <div className="font-semibold">
+                          Tk. {formatPrice(Number(product.variants[0].price))}
+                        </div>
+                      )
+                    ) : product.finalDiscount > 0 ? (
+                      <div className="line-through text-gray-500">
+                        Tk. {formatPrice(Number(product.finalPrice))}
+                      </div>
+                    ) : (
+                      <div className="font-semibold">
+                        Tk. {formatPrice(Number(product.finalPrice))}
+                      </div>
+                    )}
+
+                    {/*Discount Price*/}
+                    {product.variants?.length
+                      ? product.variants[0].discount > 0 && (
+                          <div className="text-red-800 font-semibold">
+                            Tk.{" "}
+                            {formatPrice(Number(product.variants[0].discount))}
+                          </div>
+                        )
+                      : product.finalDiscount > 0 && (
+                          <div className="text-red-800 font-semibold">
+                            Tk. {formatPrice(Number(product.finalDiscount))}
+                          </div>
+                        )}
+                  </div>
+                </div>
+                {/* Discount Percentage */}
+                <div className="absolute top-1 left-1 z-10">
+                  {product.variants?.length > 0
+                    ? product.variants[0].discount > 0 && (
+                        <span className="bg-red-400 px-2 py-1 text-white text-xs">
+                          -
+                          {calculateDiscountPercentage(
+                            product.variants[0].price,
+                            product.variants[0].discount,
+                          )}
+                          %
+                        </span>
+                      )
+                    : product.finalDiscount > 0 && (
+                        <span className="bg-red-400 px-2 py-1 text-white text-xs">
+                          -
+                          {calculateDiscountPercentage(
+                            product.finalPrice,
+                            product.finalDiscount,
+                          )}
+                          %
+                        </span>
+                      )}
+                </div>
+
+                {/* Quick View Button */}
+                <div className="absolute top-1 right-1 z-10 bg-white rounded-full flex justify-center items-center">
+                  <button
+                    onClick={() => handleOpen(product)}
+                    className="p-2 cursor-pointer"
+                  >
+                    <FaEye />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              // Grid View
               <div key={product.slug} className="relative">
                 <Link to={`/product/${product.slug}`}>
                   <ImageComponent
@@ -90,43 +183,41 @@ const ProductList = ( {products}) => {
                   {/*Discount Price*/}
                   {product.variants?.length
                     ? product.variants[0].discount > 0 && (
-                    <div className="text-red-800">
-                      Tk.{" "}
-                      {formatPrice(
-                        Number(product.variants[0].discount),
-                      )}
-                    </div>
-                  )
+                        <div className="text-red-800">
+                          Tk.{" "}
+                          {formatPrice(Number(product.variants[0].discount))}
+                        </div>
+                      )
                     : product.finalDiscount > 0 && (
-                    <div className="text-red-800">
-                      Tk. {formatPrice(Number(product.finalDiscount))}
-                    </div>
-                  )}
+                        <div className="text-red-800">
+                          Tk. {formatPrice(Number(product.finalDiscount))}
+                        </div>
+                      )}
                 </div>
 
                 {/* Discount Percentage */}
                 <div className="absolute top-1 z-10">
                   {product.variants?.length > 0
                     ? product.variants[0].discount > 0 && (
-                    <span className="bg-red-400 px-2 py-1 text-white">
-                              -
-                      {calculateDiscountPercentage(
-                        product.variants[0].price,
-                        product.variants[0].discount,
-                      )}
-                      %
-                            </span>
-                  )
+                        <span className="bg-red-400 px-2 py-1 text-white">
+                          -
+                          {calculateDiscountPercentage(
+                            product.variants[0].price,
+                            product.variants[0].discount,
+                          )}
+                          %
+                        </span>
+                      )
                     : product.finalDiscount > 0 && (
-                    <span className="bg-red-400 px-2 py-1 text-white">
-                              -
-                      {calculateDiscountPercentage(
-                        product.finalPrice,
-                        product.finalDiscount,
+                        <span className="bg-red-400 px-2 py-1 text-white">
+                          -
+                          {calculateDiscountPercentage(
+                            product.finalPrice,
+                            product.finalDiscount,
+                          )}
+                          %
+                        </span>
                       )}
-                      %
-                            </span>
-                  )}
                 </div>
 
                 {/* Quick View Button */}
@@ -139,7 +230,8 @@ const ProductList = ( {products}) => {
                   </button>
                 </div>
               </div>
-            ))}
+            ),
+          )}
 
           {/* Quick View Modal */}
           {selectedProduct && (

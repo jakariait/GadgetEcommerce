@@ -104,32 +104,48 @@ const ProductAddToCart = ({ product }) => {
           {/* Product Brand Section */}
           <ProductBrand product={product} />
 
-          <h2 className="text-2xl md:text-3xl secondaryTextColor ">
+          <h2 className="text-xl md:text-2xl  ">
             {product.name}
           </h2>
 
-          <div className="flex text-lg gap-4 justify-between ">
+          <div className="flex text-center flex-col gap-2">
             {/* Without Variant Price Display */}
             {!product.variants?.length && (
-              <div className="flex gap-2 items-center bg-gray-100 px-2 py-1 rounded-lg">
+              <div className="grid grid-cols-2 gap-2 items-center ">
                 {product.finalDiscount > 0 ? (
                   <>
-                    <div className="line-through">
-                      Tk. {formatPrice(Number(product.finalPrice))}
+                    <div className="text-red-800 bg-gray-100 px-2 py-1 rounded-lg">
+                      Offer Price: Tk.{" "}
+                      {formatPrice(Number(product.finalDiscount))}
                     </div>
-                    <div className="text-red-800">
-                      Tk. {formatPrice(Number(product.finalDiscount))}
+
+                    <div className=" bg-gray-100 px-2 py-1 rounded-lg">
+                      Regular Price: Tk.{" "}
+                      {formatPrice(Number(product.finalPrice))}
                     </div>
-                    <div>
-                      You Save: Tk{" "}
-                      {formatPrice(
-                        Number(product.finalPrice - product.finalDiscount),
-                      )}
-                    </div>
+
+                    {/*<div className={"bg-gray-100 px-2 py-1 rounded-lg"}>*/}
+                    {/*  You Save: Tk{" "}*/}
+                    {/*  {formatPrice(*/}
+                    {/*    Number(product.finalPrice - product.finalDiscount),*/}
+                    {/*  )}*/}
+                    {/*</div>*/}
                   </>
                 ) : (
-                  <div className="text-black font-medium">
-                    Tk. {formatPrice(Number(product.finalPrice))}
+                  <div className="text-black font-medium bg-gray-100 px-2 py-1 rounded-lg">
+                    Price: Tk. {formatPrice(Number(product.finalPrice))}
+                  </div>
+                )}
+                {/*Product Code*/}
+                {product.productCode && (
+                  <div className={"bg-gray-100  px-2 py-1 rounded-lg"}>
+                    <strong>Product Code:</strong> {product.productCode}
+                  </div>
+                )}
+                {/* Reward Points */}
+                {product.rewardPoints && (
+                  <div className={"bg-gray-100  px-2 py-1 rounded-lg"}>
+                    Purchase & Earn: {product.rewardPoints} points.
                   </div>
                 )}
               </div>
@@ -137,39 +153,48 @@ const ProductAddToCart = ({ product }) => {
 
             {/*With Variant Price Display */}
             {selectedVariant && (
-              <div className="flex gap-2 bg-gray-100 px-2 py-1 rounded-lg">
+              <div className="grid grid-cols-2 gap-2 items-center">
                 {selectedVariant.discount > 0 ? (
                   <>
-                    <div className="line-through">
-                      Tk. {formatPrice(Number(selectedVariant.price))}
+                    <div className="text-red-800 bg-gray-100 px-2 py-1 rounded-lg">
+                      Offer Price: Tk.{" "}
+                      {formatPrice(Number(selectedVariant.discount))}
                     </div>
-                    <div className="text-red-800">
-                      Tk. {formatPrice(Number(selectedVariant.discount))}
+                    <div className="bg-gray-100 px-2 py-1 rounded-lg">
+                      Regular Price:{" "}
+                      <span className="line-through">
+                        Tk. {formatPrice(Number(selectedVariant.price))}
+                      </span>
                     </div>
-                    <div>
-                      You Save: Tk{" "}
-                      {formatPrice(
-                        Number(
-                          selectedVariant.price - selectedVariant.discount,
-                        ),
-                      )}
-                    </div>
+                    {/*<div className="bg-gray-100 px-2 py-1 rounded-lg">*/}
+                    {/*  You Save: Tk{" "}*/}
+                    {/*  {formatPrice(*/}
+                    {/*    Number(selectedVariant.price - selectedVariant.discount),*/}
+                    {/*  )}*/}
+                    {/*</div>*/}
                   </>
                 ) : (
-                  <div className="text-black">
-                    Tk. {formatPrice(Number(selectedVariant.price))}
+                  <div className="text-black bg-gray-100 px-2 py-1 rounded-lg">
+                    Price: Tk. {formatPrice(Number(selectedVariant.price))}
+                  </div>
+                )}
+                {/*Product Code*/}
+                {product.productCode && (
+                  <div className={"bg-gray-100  px-2 py-1 rounded-lg"}>
+                    <strong>Product Code:</strong> {product.productCode}
+                  </div>
+                )}
+                {/* Reward Points */}
+                {product.rewardPoints && (
+                  <div className={"bg-gray-100  px-2 py-1 rounded-lg"}>
+                    Purchase & Earn: {product.rewardPoints} points.
                   </div>
                 )}
               </div>
             )}
           </div>
 
-          {/* Reward Points */}
-          {product.rewardPoints && (
-            <div className={"bg-gray-100 w-fit px-2 py-1 rounded-lg"}>
-              Purchase & Earn: {product.rewardPoints} points.
-            </div>
-          )}
+
           {/*Short Description*/}
           {product.shortDesc && (
             <div
@@ -240,7 +265,7 @@ const ProductAddToCart = ({ product }) => {
             </div>
             {/*Add to Cart Button*/}
             {selectedVariant?.stock === 0 || product.finalStock === 0 ? (
-              <button className="text-red-600 font-semibold" disabled>
+              <button className="text-red-600 w-44 font-semibold" disabled>
                 Stock Out
               </button>
             ) : (
@@ -253,14 +278,7 @@ const ProductAddToCart = ({ product }) => {
             )}
 
             {/*Cash On Delivery Order Button*/}
-            {selectedVariant?.stock === 0 || product.finalStock === 0 ? (
-              <button
-                className="text-red-600  font-semibold w-full mt-2"
-                disabled
-              >
-                Stock Out
-              </button>
-            ) : (
+            {selectedVariant?.stock !== 0 && product.finalStock !== 0 && (
               <button
                 className="primaryBgColor w-44 accentTextColor px-2 py-1 md:py-2 rounded cursor-pointer"
                 onClick={() => {
