@@ -35,7 +35,7 @@ const blogController = require("../controllers/BlogController");
 const PassWordResetController = require("../controllers/PassWordResetController");
 const brandController = require("../controllers/brandController");
 const productQuestionController = require("../controllers/productQuestionController");
-
+const reviewController = require("../controllers/productReviewController");
 
 const { handleCourierCheck } = require("../controllers/courierController");
 const {
@@ -753,16 +753,25 @@ router.get("/blog/:id", blogController.getBlogById);
 router.post("/request-reset", PassWordResetController.requestPasswordReset);
 router.post("/reset-password", PassWordResetController.resetPasswordWithOTP);
 
-
 // Product Questions  CRUD Routes
-
-// CRUD routes
-router.post("/products/:productId/questions",userProtect, productQuestionController.createQuestion);
-router.get("/products/:productId/questions", productQuestionController.getQuestionsByProduct);
+router.post(
+  "/products/:productId/questions",
+  userProtect,
+  productQuestionController.createQuestion,
+);
+router.get(
+  "/products/:productId/questions",
+  productQuestionController.getQuestionsByProduct,
+);
 router.get("/questions/:id", productQuestionController.getQuestionById);
 router.put("/questions/:id", productQuestionController.updateQuestion);
 router.delete("/questions/:id", productQuestionController.deleteQuestion);
 
-
+// Product Reviews CRUD Routes
+router.post("/reviews", reviewController.createReview);
+router.get("/reviews/product/:productId", reviewController.getReviewsByProduct);
+router.get("/reviews/:id", reviewController.getReviewById);
+router.put("/reviews/:id", reviewController.updateReview);
+router.delete("/reviews/:id", reviewController.deleteReview);
 
 module.exports = router;

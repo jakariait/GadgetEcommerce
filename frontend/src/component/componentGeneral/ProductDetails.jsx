@@ -17,16 +17,10 @@ import {
 import { Helmet } from "react-helmet";
 import { Breadcrumbs, Link, Typography } from "@mui/material";
 
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import AccordionDetails from "@mui/material/AccordionDetails";
 import ProductGallery from "./ProductGallery.jsx";
 import ProductAddToCart from "./ProductAddToCart.jsx";
-import axios from "axios";
 import SimilarProducts from "./SimilarProducts.jsx";
 import YouTubeEmbed from "./YouTubeEmbed.jsx";
-import ImageComponent from "./ImageComponent.jsx";
 import Specification from "./Specification.jsx";
 import ProductQuestionsSection from "./ProductQuestionsSection.jsx";
 
@@ -34,6 +28,7 @@ const ProductDetails = () => {
   const hasPushedRef = useRef(false);
   const specRef = useRef(null);
   const descRef = useRef(null);
+  const questionRef = useRef(null);
 
   const handleScroll = (ref) => {
     if (ref.current) {
@@ -307,6 +302,13 @@ const ProductDetails = () => {
             >
               Description
             </button>
+
+            <button
+              onClick={() => handleScroll(questionRef)}
+              className="px-4 py-2  rounded-md bg-white secondaryTextColor transition text-lg font-semibold cursor-pointer"
+            >
+              Question
+            </button>
           </div>
 
           <div className={"md:grid gap-4 grid-cols-5 "}>
@@ -332,9 +334,10 @@ const ProductDetails = () => {
                   </div>
                 )}
               </div>
-
-
-              <ProductQuestionsSection productId={product.id} />
+              {/*Product Question and Answer*/}
+              <div ref={questionRef}>
+                <ProductQuestionsSection productId={product.id} />
+              </div>
             </div>
 
             <div className={"col-span-2 "}>
