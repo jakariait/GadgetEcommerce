@@ -757,7 +757,7 @@ router.post("/reset-password", PassWordResetController.resetPasswordWithOTP);
 // Product Questions  CRUD Routes
 
 // CRUD routes
-router.post("/products/:productId/questions", productQuestionController.createQuestion);
+router.post("/products/:productId/questions",userProtect, productQuestionController.createQuestion);
 router.get("/products/:productId/questions", productQuestionController.getQuestionsByProduct);
 router.get("/questions/:id", productQuestionController.getQuestionById);
 router.put("/questions/:id", productQuestionController.updateQuestion);

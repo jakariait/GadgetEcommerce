@@ -9,7 +9,7 @@ const createQuestion = async (data) => {
 // Get all questions for a product
 const getQuestionsByProduct = async (productId) => {
   return ProductQuestion.find({ productId })
-    .populate("userId", "name email")
+    .populate("userId", "name email fullName")
     .sort({ createdAt: -1 });
 };
 

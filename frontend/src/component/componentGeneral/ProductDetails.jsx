@@ -28,6 +28,7 @@ import SimilarProducts from "./SimilarProducts.jsx";
 import YouTubeEmbed from "./YouTubeEmbed.jsx";
 import ImageComponent from "./ImageComponent.jsx";
 import Specification from "./Specification.jsx";
+import ProductQuestionsSection from "./ProductQuestionsSection.jsx";
 
 const ProductDetails = () => {
   const hasPushedRef = useRef(false);
@@ -331,6 +332,9 @@ const ProductDetails = () => {
                   </div>
                 )}
               </div>
+
+
+              <ProductQuestionsSection productId={product.id} />
             </div>
 
             <div className={"col-span-2 "}>
