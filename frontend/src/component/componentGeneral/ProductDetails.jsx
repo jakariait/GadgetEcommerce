@@ -256,7 +256,7 @@ const ProductDetails = () => {
                 discount={discountPercentage}
               />
             </div>
-            <div className="flex flex-col gap-3 md:col-span-5 lg:col-span-4 pt-4 md:pt-0">
+            <div className="flex flex-col gap-3 md:col-span-5 lg:col-span-4 pt-4 md:pt-0 ">
               <ProductAddToCart product={product} />
 
               <div className={"flex gap-2 justify-between"}>
@@ -308,14 +308,14 @@ const ProductDetails = () => {
             </button>
           </div>
 
-          <div className={"md:grid gap-4 grid-cols-5"}>
-            <div className={"col-span-3"}>
+          <div className={"md:grid gap-4 grid-cols-5 "}>
+            <div className={"col-span-3 flex flex-col gap-4"}>
               {/*Specification*/}
               <div ref={specRef}>
                 <Specification product={product} />
               </div>
 
-              <div ref={descRef} className={" shadow-sm rounded-lg mt-4"}>
+              <div ref={descRef} className={" shadow-sm rounded-lg "}>
                 {/*product Description*/}
                 {product.longDesc && (
                   <div className={"p-3"}>
@@ -333,7 +333,7 @@ const ProductDetails = () => {
               </div>
             </div>
 
-            <div className={"col-span-2"}>
+            <div className={"col-span-2 "}>
               <SimilarProducts
                 categoryId={product?.category?._id}
                 productId={product?._id}

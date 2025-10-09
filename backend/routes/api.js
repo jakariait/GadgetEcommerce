@@ -34,6 +34,8 @@ const SteadfastConfigController = require("../controllers/SteadfastConfigControl
 const blogController = require("../controllers/BlogController");
 const PassWordResetController = require("../controllers/PassWordResetController");
 const brandController = require("../controllers/brandController");
+const productQuestionController = require("../controllers/productQuestionController");
+
 
 const { handleCourierCheck } = require("../controllers/courierController");
 const {
@@ -750,5 +752,17 @@ router.get("/blog/:id", blogController.getBlogById);
 // Password Reset Routes
 router.post("/request-reset", PassWordResetController.requestPasswordReset);
 router.post("/reset-password", PassWordResetController.resetPasswordWithOTP);
+
+
+// Product Questions  CRUD Routes
+
+// CRUD routes
+router.post("/products/:productId/questions", productQuestionController.createQuestion);
+router.get("/products/:productId/questions", productQuestionController.getQuestionsByProduct);
+router.get("/questions/:id", productQuestionController.getQuestionById);
+router.put("/questions/:id", productQuestionController.updateQuestion);
+router.delete("/questions/:id", productQuestionController.deleteQuestion);
+
+
 
 module.exports = router;

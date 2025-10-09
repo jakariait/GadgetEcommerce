@@ -38,7 +38,7 @@ const SimilarProducts = ({ categoryId, productId }) => {
 
   return (
     <div>
-      <div className={"px-2 shadow-lg rounded-lg"}>
+      <div className={"px-2 py-4 shadow-lg rounded-lg"}>
         <h1
           className={"text-2xl primaryTextColor text-center secondaryTextColor"}
         >
