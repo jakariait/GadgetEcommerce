@@ -23,12 +23,14 @@ import SimilarProducts from "./SimilarProducts.jsx";
 import YouTubeEmbed from "./YouTubeEmbed.jsx";
 import Specification from "./Specification.jsx";
 import ProductQuestionsSection from "./ProductQuestionsSection.jsx";
+import ProductReviewSections from "./ProductReviewSections.jsx";
 
 const ProductDetails = () => {
   const hasPushedRef = useRef(false);
   const specRef = useRef(null);
   const descRef = useRef(null);
   const questionRef = useRef(null);
+  const reviewRef = useRef(null);
 
   const handleScroll = (ref) => {
     if (ref.current) {
@@ -309,6 +311,13 @@ const ProductDetails = () => {
             >
               Question
             </button>
+
+            <button
+              onClick={() => handleScroll(reviewRef)}
+              className="px-4 py-2  rounded-md bg-white secondaryTextColor transition text-lg font-semibold cursor-pointer"
+            >
+              Review
+            </button>
           </div>
 
           <div className={"md:grid gap-4 grid-cols-5 "}>
@@ -337,6 +346,11 @@ const ProductDetails = () => {
               {/*Product Question and Answer*/}
               <div ref={questionRef}>
                 <ProductQuestionsSection productId={product.id} />
+              </div>
+
+              {/*Product Review*/}
+              <div ref={reviewRef}>
+                <ProductReviewSections productId={product.id} />
               </div>
             </div>
 

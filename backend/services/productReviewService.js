@@ -8,9 +8,26 @@ const createReview = async (data) => {
 
 // Get all reviews for a specific product
 const getReviewsByProduct = async (productId) => {
-  return ProductReview.find({ productId })
-    .populate("userId", "name email")
+  const approvedReviews = await ProductReview.find({
+    productId,
+    status: "approved",
+  })
+    .populate("userId", " fullName")
     .sort({ createdAt: -1 });
+
+  const totalReviews = approvedReviews.length;
+
+  const averageRating =
+    totalReviews > 0
+      ? approvedReviews.reduce((acc, item) => item.rating + acc, 0) /
+        totalReviews
+      : 0;
+
+  return {
+    reviews: approvedReviews,
+    totalReviews,
+    averageRating: averageRating.toFixed(1),
+  };
 };
 
 // Get single review by ID
@@ -28,10 +45,19 @@ const deleteReview = async (id) => {
   return ProductReview.findByIdAndDelete(id);
 };
 
+// Get all reviews (for admin)
+const getAllReviews = async () => {
+  return ProductReview.find({})
+    .populate("userId", "name email")
+    .populate("productId", "name") // Assuming product model has a 'name' field
+    .sort({ createdAt: -1 });
+};
+
 module.exports = {
   createReview,
   getReviewsByProduct,
   getReviewById,
   updateReview,
   deleteReview,
+  getAllReviews,
 };

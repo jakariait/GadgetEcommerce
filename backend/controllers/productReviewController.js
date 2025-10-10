@@ -3,7 +3,7 @@ const reviewService = require("../services/productReviewService");
 // Create review
 const createReview = async (req, res) => {
   try {
-    const { productId } = req.params;
+    const { productId } = req.body;
     const data = {
       productId,
       userId: req.user?._id || req.body.userId,
@@ -21,8 +21,8 @@ const createReview = async (req, res) => {
 // Get all reviews for a product
 const getReviewsByProduct = async (req, res) => {
   try {
-    const reviews = await reviewService.getReviewsByProduct(req.params.productId);
-    res.status(200).json({ message: "Reviews retrieved successfully", reviews });
+    const { reviews, totalReviews, averageRating } = await reviewService.getReviewsByProduct(req.params.productId);
+    res.status(200).json({ message: "Reviews retrieved successfully", reviews, totalReviews, averageRating });
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch reviews", error: error.message });
   }
@@ -61,10 +61,21 @@ const deleteReview = async (req, res) => {
   }
 };
 
+// Get all reviews --- ADMIN
+const getAllReviews = async (req, res) => {
+  try {
+    const reviews = await reviewService.getAllReviews();
+    res.status(200).json({ message: "All reviews retrieved successfully", reviews });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch all reviews", error: error.message });
+  }
+};
+
 module.exports = {
   createReview,
   getReviewsByProduct,
   getReviewById,
   updateReview,
   deleteReview,
+  getAllReviews,
 };
