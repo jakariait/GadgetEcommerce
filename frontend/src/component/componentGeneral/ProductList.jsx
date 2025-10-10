@@ -13,6 +13,8 @@ const formatPrice = (price) => {
 };
 
 const ProductList = ( {products, productPage}) => {
+
+
   const [selectedProduct, setSelectedProduct] = useState(null);
   const handleOpen = (product) => {
     setSelectedProduct(product);

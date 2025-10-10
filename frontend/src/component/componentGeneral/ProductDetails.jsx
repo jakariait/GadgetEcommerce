@@ -24,6 +24,7 @@ import YouTubeEmbed from "./YouTubeEmbed.jsx";
 import Specification from "./Specification.jsx";
 import ProductQuestionsSection from "./ProductQuestionsSection.jsx";
 import ProductReviewSections from "./ProductReviewSections.jsx";
+import RecentlyViewedProducts from "./RecentlyViewedProducts.jsx";
 
 const ProductDetails = () => {
   const hasPushedRef = useRef(false);
@@ -126,6 +127,40 @@ const ProductDetails = () => {
     });
 
     hasPushedRef.current = true;
+  }, [product]);
+
+  useEffect(() => {
+    if (!product?._id) return;
+
+    // Get existing list or empty array
+    let viewed = JSON.parse(localStorage.getItem("recentlyViewed") || "[]");
+
+    // Remove if already exists (avoid duplicates)
+    viewed = viewed.filter((item) => item._id !== product._id);
+
+    // Add new one at beginning
+    viewed.unshift({
+      _id: product._id,
+      name: product.name,
+      isActive:product.isActive,
+      category: product.category,
+      finalDiscount: product.finalDiscount,
+      finalPrice: product.finalPrice,
+      productId: product.productId,
+      slug: product.slug,
+      variants: product.variants,
+      finalStock: product.finalStock,
+      flags: product.flags,
+      images: product.images,
+      thumbnailImage: product.thumbnailImage,
+
+    });
+
+    // Limit to 10 items
+    viewed = viewed.slice(0, 10);
+
+    // Save back
+    localStorage.setItem("recentlyViewed", JSON.stringify(viewed));
   }, [product]);
 
   // If product is loading, show a loading screen
@@ -291,7 +326,7 @@ const ProductDetails = () => {
             </div>
           )}
 
-          <div className="flex gap-4 my-4 bg-gray-100 px-2 py-2">
+          <div className="grid-cols-2 md:grid-cols-4 grid gap-4 my-4 bg-gray-100 px-2 py-2">
             <button
               onClick={() => handleScroll(specRef)}
               className="px-4 py-2 secondaryBgColor text-white rounded-md  transition text-lg font-semibold cursor-pointer"
@@ -359,6 +394,8 @@ const ProductDetails = () => {
                 categoryId={product?.category?._id}
                 productId={product?._id}
               />
+
+              <RecentlyViewedProducts currentProductId={product.id} />
             </div>
           </div>
         </div>
