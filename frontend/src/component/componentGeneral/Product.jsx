@@ -9,6 +9,7 @@ import { useSearchParams } from "react-router-dom";
 import useProductStore from "../../store/useProductStore.js";
 import useCategoryStore from "../../store/useCategoryStore.js";
 import useFlagStore from "../../store/useFlagStore.js";
+import useBrandStore from "../../store/useBrandStore.js";
 import {
   FormControl,
   InputLabel,
@@ -54,6 +55,12 @@ const Product = () => {
 
   const { categories } = useCategoryStore();
   const { flags } = useFlagStore();
+  const { brands, fetchBrands } = useBrandStore();
+
+  // Fetch brands on component mount
+  useEffect(() => {
+    fetchBrands();
+  }, [fetchBrands]);
 
   // Local state for drawer visibility
   const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
@@ -80,6 +87,7 @@ const Product = () => {
       category: searchParams.get("category") || "",
       subcategory: searchParams.get("subcategory") || "",
       childCategory: searchParams.get("childCategory") || "",
+      brand: searchParams.get("brand") || "",
       stock: searchParams.get("stock") || "",
       flags: searchParams.get("flags") || "",
       search: searchParams.get("search") || "",
@@ -201,6 +209,8 @@ const Product = () => {
     () => (flags || []).filter((flag) => flag.isActive),
     [flags],
   );
+
+  const memoizedBrands = useMemo(() => brands || [], [brands]);
 
   // Single effect to fetch products when filters change
   useEffect(() => {
@@ -357,6 +367,25 @@ const Product = () => {
                 </FormControl>
 
                 <FormControl fullWidth>
+                  <InputLabel>Brand</InputLabel>
+                  <Select
+                    name="brand"
+                    value={currentFilters.brand}
+                    onChange={handleFilterChange}
+                    label="Brand"
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {memoizedBrands.map((brand) => (
+                      <MenuItem key={brand._id} value={brand.slug}>
+                        {brand.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <FormControl fullWidth>
                   <InputLabel>Stock</InputLabel>
                   <Select
                     name="stock"
@@ -467,7 +496,7 @@ const Product = () => {
           {/* Desktop Filters */}
           <div className="hidden md:block mb-6">
             <Grid container spacing={2}>
-              <Grid item xs={4} sm={4} md={3}>
+              <Grid item xs={6} sm={4} md={2}>
                 <FormControl fullWidth>
                   <InputLabel>Category</InputLabel>
                   <Select
@@ -488,7 +517,28 @@ const Product = () => {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={4} sm={4} md={3}>
+              <Grid item xs={6} sm={4} md={2}>
+                <FormControl fullWidth>
+                  <InputLabel>Brand</InputLabel>
+                  <Select
+                    name="brand"
+                    value={currentFilters.brand}
+                    onChange={handleFilterChange}
+                    label="Brand"
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {memoizedBrands.map((brand) => (
+                      <MenuItem key={brand._id} value={brand.slug}>
+                        {brand.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={6} sm={4} md={2}>
                 <FormControl fullWidth>
                   <InputLabel>Flag</InputLabel>
                   <Select
@@ -571,6 +621,7 @@ const Product = () => {
           {/* Active Search/Filter Indicators */}
           {(currentFilters.search ||
             currentFilters.category ||
+            currentFilters.brand ||
             currentFilters.flags ||
             currentFilters.stock !== "" ||
             currentFilters.sort) && (
@@ -595,6 +646,13 @@ const Product = () => {
               {currentFilters.flags && (
                 <div className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
                   Flag: {currentFilters.flags}
+                </div>
+              )}
+              {currentFilters.brand && (
+                <div className="bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-sm">
+                  Brand:{" "}
+                  {memoizedBrands.find((b) => b.slug === currentFilters.brand)
+                    ?.name || currentFilters.brand}
                 </div>
               )}
               {currentFilters.stock && (

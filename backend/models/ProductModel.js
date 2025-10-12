@@ -209,6 +209,7 @@ productSchema.pre("save", function (next) {
 productSchema.index({ name: 1, slug: 1 });
 productSchema.index({ category: 1 });
 productSchema.index({ name: "text" });
+productSchema.index({ brand: 1 });
 
 
 const ProductModel = mongoose.model("Product", productSchema);

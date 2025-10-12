@@ -1,4 +1,5 @@
 const ProductModel = require("../models/ProductModel");
+const BrandModel = require("../models/BrandModel");
 const FlagModel = require("../models/FlagModel");
 const CategoryModel = require("../models/CategoryModel");
 const SubCategoryModel = require("../models/SubCategoryModel");
@@ -96,177 +97,6 @@ const deleteProduct = async (productId) => {
 	}
 };
 
-// Get all products with pagination, filters, and sorting
-// const getAllProducts = async ({
-//   page = 1,
-//   limit = 10,
-//   sort,
-//   category,
-//   subcategory,
-//   childCategory,
-//   stock,
-//   flags,
-//   isActive,
-//   search, // <-- added
-// }) => {
-//   try {
-//     // Fetch category, subcategory, and childCategory independently
-//     const [categoryDoc, subCategoryDoc, childCategoryDoc, flagDocs] =
-//       await Promise.all([
-//         category
-//           ? CategoryModel.findOne({ name: category }).select("_id")
-//           : null,
-//         subcategory
-//           ? SubCategoryModel.findOne({
-//               slug: subcategory,
-//               isActive: true,
-//             }).select("_id")
-//           : null,
-//         childCategory
-//           ? ChildCategoryModel.findOne({
-//               slug: childCategory,
-//               isActive: true,
-//             }).select("_id")
-//           : null,
-//         flags
-//           ? FlagModel.find({
-//               name: { $in: flags.split(",") },
-//               isActive: true,
-//             }).select("_id")
-//           : [],
-//       ]);
-//
-//     // If any provided category, subcategory, or childCategory is invalid, return an empty result
-//     if (
-//       (category && !categoryDoc) ||
-//       (subcategory && !subCategoryDoc) ||
-//       (childCategory && !childCategoryDoc) ||
-//       (flags && flagDocs.length === 0)
-//     ) {
-//       return {
-//         products: [],
-//         totalProducts: 0,
-//         totalPages: 0,
-//         currentPage: page,
-//       };
-//     }
-//
-//     let query = {};
-//
-//     if (typeof isActive === "boolean") {
-//       query.isActive = isActive;
-//     }
-//
-//     // Apply filters for valid active categories, subcategories, and child categories
-//     if (categoryDoc) query.category = categoryDoc._id;
-//     if (subCategoryDoc) query.subCategory = subCategoryDoc._id;
-//     if (childCategoryDoc) query.childCategory = childCategoryDoc._id;
-//
-//     // Apply stock filter (in-stock or out-of-stock)
-//     if (stock === "in") query.finalStock = { $gt: 0 };
-//     if (stock === "out") query.finalStock = { $lte: 0 };
-//
-//
-//
-//
-//
-//     // Apply flags filter if provided
-//     if (flagDocs.length)
-//       query.flags = { $in: flagDocs.map((flag) => flag._id) };
-//
-//     // Default sorting to newest first
-//     let sortOption = { createdAt: -1 };
-//
-//     // Check for valid sorting values
-//     const validSortValues = [
-//       "price_high",
-//       "price_low",
-//       "name_asc",
-//       "name_desc",
-//       "latest",
-//       "oldest",
-//     ];
-//     if (sort && !validSortValues.includes(sort)) {
-//       return {
-//         products: [],
-//         totalProducts: 0,
-//         totalPages: 0,
-//         currentPage: page,
-//       };
-//     }
-//
-//     // Sorting logic
-//     if (sort === "price_high") sortOption = { finalDiscount: -1 };
-//     if (sort === "price_low") sortOption = { finalDiscount: 1 };
-//     if (sort === "name_asc") sortOption = { name: 1 }; // A-Z
-//     if (sort === "name_desc") sortOption = { name: -1 }; // Z-A
-//     if (sort === "oldest") sortOption = { createdAt: 1 }; // Oldest first
-//
-//     // Count total products based on the active filter
-//     const totalProducts = await ProductModel.countDocuments(query);
-//
-//     // Fetch products with filters, sorting, and pagination
-//     const products = await ProductModel.find(query)
-//       .sort(sortOption)
-//       .skip((page - 1) * limit)
-//       .limit(limit)
-//       .select(
-//         "name slug finalDiscount finalPrice finalStock thumbnailImage isActive images productId category variants flags productId",
-//       )
-//       .populate([
-//         { path: "category", select: "-createdAt -updatedAt" },
-//         { path: "flags", select: "-createdAt -updatedAt" },
-//         { path: "variants.size", select: "-createdAt -updatedAt" },
-//       ]);
-//     if (
-//       (category && !categoryDoc) ||
-//       (subcategory && !subCategoryDoc) ||
-//       (childCategory && !childCategoryDoc) ||
-//       (flags && flagDocs.length === 0)
-//     ) {
-//       return {
-//         products: [],
-//         totalProducts: 0,
-//         totalPages: 0,
-//         currentPage: page,
-//       };
-//     }
-//
-// // ✅ ADD THIS NEXT
-//     if (search && search.trim()) {
-//       const matchedProduct = await ProductModel.findOne({
-//         $expr: {
-//           $eq: [{ $toLower: "$name" }, search.toLowerCase()],
-//         },
-//         isActive: true,
-//       })
-//         .select(
-//           "name slug finalDiscount finalPrice finalStock thumbnailImage isActive images productId category variants flags"
-//         )
-//         .populate([
-//           { path: "category", select: "-createdAt -updatedAt" },
-//           { path: "flags", select: "-createdAt -updatedAt" },
-//           { path: "variants.size", select: "-createdAt -updatedAt" },
-//         ]);
-//
-//       return {
-//         products: matchedProduct ? [matchedProduct] : [],
-//         totalProducts: matchedProduct ? 1 : 0,
-//         totalPages: 1,
-//         currentPage: page,
-//       };
-//     }
-//
-//     return {
-//       products,
-//       totalProducts,
-//       totalPages: Math.ceil(totalProducts / limit),
-//       currentPage: page,
-//     };
-//   } catch (error) {
-//     throw new Error(error.message);
-//   }
-// };
 
 const getAllProducts = async ({
 	page = 1,
@@ -275,6 +105,7 @@ const getAllProducts = async ({
 	category,
 	subcategory,
 	childCategory,
+	brand,
 	stock,
 	flags,
 	isActive,
@@ -282,36 +113,45 @@ const getAllProducts = async ({
 }) => {
 	try {
 		// Fetch category, subcategory, childCategory, and flags independently
-		const [categoryDoc, subCategoryDoc, childCategoryDoc, flagDocs] =
-			await Promise.all([
-				category
-					? CategoryModel.findOne({ name: category }).select("_id")
-					: null,
-				subcategory
-					? SubCategoryModel.findOne({
-							slug: subcategory,
-							isActive: true,
-					  }).select("_id")
-					: null,
-				childCategory
-					? ChildCategoryModel.findOne({
-							slug: childCategory,
-							isActive: true,
-					  }).select("_id")
-					: null,
-				flags
-					? FlagModel.find({
-							name: { $in: flags.split(",") },
-							isActive: true,
-					  }).select("_id")
-					: [],
-			]);
+		const [
+			categoryDoc,
+			subCategoryDoc,
+			childCategoryDoc,
+			brandDoc,
+			flagDocs,
+		] = await Promise.all([
+			category
+				? CategoryModel.findOne({ name: category }).select("_id")
+				: null,
+			subcategory
+				? SubCategoryModel.findOne({
+						slug: subcategory,
+						isActive: true,
+				  }).select("_id")
+				: null,
+			childCategory
+				? ChildCategoryModel.findOne({
+						slug: childCategory,
+						isActive: true,
+				  }).select("_id")
+				: null,
+			brand
+				? BrandModel.findOne({ slug: brand }).select("_id")
+				: null,
+			flags
+				? FlagModel.find({
+						name: { $in: flags.split(",") },
+						isActive: true,
+				  }).select("_id")
+				: [],
+		]);
 
 		// If any provided category, subcategory, childCategory, or flags are invalid, return empty result
 		if (
 			(category && !categoryDoc) ||
 			(subcategory && !subCategoryDoc) ||
 			(childCategory && !childCategoryDoc) ||
+			(brand && !brandDoc) ||
 			(flags && flagDocs.length === 0)
 		) {
 			return {
@@ -332,6 +172,7 @@ const getAllProducts = async ({
 		if (categoryDoc) query.category = categoryDoc._id;
 		if (subCategoryDoc) query.subCategory = subCategoryDoc._id;
 		if (childCategoryDoc) query.childCategory = childCategoryDoc._id;
+		if (brandDoc) query.brand = brandDoc._id;
 
 		if (stock === "in") query.finalStock = { $gt: 0 };
 		if (stock === "out") query.finalStock = { $lte: 0 };
@@ -380,10 +221,11 @@ const getAllProducts = async ({
 			.skip((page - 1) * limit)
 			.limit(limit)
 			.select(
-				"name slug finalDiscount finalPrice finalStock thumbnailImage isActive images productId category variants flags"
+				"name slug finalDiscount finalPrice finalStock thumbnailImage isActive images productId category brand variants flags"
 			)
 			.populate([
 				{ path: "category", select: "-createdAt -updatedAt" },
+				{ path: "brand", select: "-createdAt -updatedAt" },
 				{ path: "flags", select: "-createdAt -updatedAt" },
 				{ path: "variants.size", select: "-createdAt -updatedAt" },
 			]);
@@ -563,10 +405,11 @@ const getSimilarProducts = async (category, excludeId) => {
 		})
 			.limit(12) // Limiting to 12 products
 			.select(
-				"name slug finalDiscount finalPrice finalStock thumbnailImage isActive images productId category variants flags productId"
+				"name slug finalDiscount finalPrice finalStock thumbnailImage isActive images productId category brand variants flags"
 			)
 			.populate([
 				{ path: "category", select: "-createdAt -updatedAt" },
+				{ path: "brand", select: "-createdAt -updatedAt" },
 				{ path: "flags", select: "-createdAt -updatedAt" },
 				{ path: "variants.size", select: "-createdAt -updatedAt" },
 			]);
@@ -682,10 +525,11 @@ const getHomePageProducts = async () => {
 				.sort({ createdAt: -1 }) // Sort products by newest first
 
 				.select(
-					"name slug finalDiscount finalPrice finalStock thumbnailImage isActive images productId category variants flags"
+					"name slug finalDiscount finalPrice finalStock thumbnailImage isActive images productId category brand variants flags"
 				)
 				.populate([
 					{ path: "category", select: "-createdAt -updatedAt" },
+					{ path: "brand", select: "-createdAt -updatedAt" },
 					{ path: "flags", select: "-createdAt -updatedAt" },
 					{ path: "variants.size", select: "-createdAt -updatedAt" },
 				]);

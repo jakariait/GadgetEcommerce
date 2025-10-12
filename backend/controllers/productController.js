@@ -155,6 +155,7 @@ const getAllProducts = async (req, res) => {
       category,
       subcategory,
       childCategory,
+      brand,
       stock,
       flags,
       search,
@@ -167,6 +168,7 @@ const getAllProducts = async (req, res) => {
       category,
       subcategory,
       childCategory,
+      brand,
       stock,
       flags,
       isActive: true,
@@ -258,6 +260,7 @@ const getAllProductsAdmin = async (req, res) => {
       category,
       subcategory,
       childCategory,
+      brand,
       stock,
       flags,
     } = req.query;
@@ -270,6 +273,7 @@ const getAllProductsAdmin = async (req, res) => {
       category,
       subcategory,
       childCategory,
+      brand,
       stock,
       flags,
       // Don't pass isActive filter here, meaning it will return all products

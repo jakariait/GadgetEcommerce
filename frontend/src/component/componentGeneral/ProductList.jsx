@@ -1,8 +1,14 @@
-import React, {useCallback, useState} from 'react';
-import {Button, Dialog, DialogActions, DialogContent, Typography} from "@mui/material";
-import {Link} from "react-router-dom";
+import React, { useState } from "react";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Typography,
+} from "@mui/material";
+import { Link } from "react-router-dom";
 import ImageComponent from "./ImageComponent.jsx";
-import {FaEye} from "react-icons/fa";
+import { FaEye } from "react-icons/fa";
 import ProductGallery from "./ProductGallery.jsx";
 import ProductAddToCart from "./ProductAddToCart.jsx";
 
@@ -12,14 +18,11 @@ const formatPrice = (price) => {
   return price.toLocaleString();
 };
 
-const ProductList = ( {products, productPage}) => {
-
-
+const ProductList = ({ products, productPage }) => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const handleOpen = (product) => {
     setSelectedProduct(product);
   };
-
 
   const handleClose = () => {
     setSelectedProduct(null);
@@ -38,7 +41,6 @@ const ProductList = ( {products, productPage}) => {
     return Math.ceil((discountAmount / priceBeforeDiscount) * 100);
   };
   return (
-
     <div>
       {products.filter((product) => product.isActive).length === 0 ? (
         <Typography
@@ -49,7 +51,11 @@ const ProductList = ( {products, productPage}) => {
         </Typography>
       ) : (
         <div
-          className={productPage ? "grid grid-cols-1 gap-3 mt-4" : "grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 mt-4"}
+          className={
+            productPage
+              ? "grid grid-cols-1 gap-3 mt-4"
+              : "grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 mt-4"
+          }
         >
           {/*Product Display Section*/}
           {products.map((product) =>
@@ -68,7 +74,7 @@ const ProductList = ( {products, productPage}) => {
                     />
                   </Link>
                 </div>
-                <div >
+                <div>
                   <Link to={`/product/${product.slug}`}>
                     <div className=" font-semibold hover:underline mb-2">
                       {product.name}

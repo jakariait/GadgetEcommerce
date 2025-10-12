@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import ImageComponent from "./ImageComponent.jsx";
 
 const BrandCardSkeleton = () => {
@@ -22,7 +23,7 @@ const AllBrands = () => {
     const fetchBrands = async () => {
       try {
         const res = await axios.get(`${API_URL}/brands`);
-        setBrands(res.data.brands || []);
+        setBrands(res.data.data || []);
       } catch (err) {
         setError("Failed to fetch brands");
       } finally {
@@ -52,7 +53,8 @@ const AllBrands = () => {
           </p>
         ) : (
           brands.map((brand) => (
-            <div
+            <Link
+              to={`/shop?page=1&limit=20&brand=${brand.slug}`}
               key={brand._id}
               className="bg-white rounded-2xl shadow hover:shadow-lg transition duration-200 flex flex-col items-center p-1"
             >
@@ -63,7 +65,7 @@ const AllBrands = () => {
                 skeletonHeight={100}
               />
               <h3 className="text-lg font-medium">{brand.name}</h3>
-            </div>
+            </Link>
           ))
         )}
       </div>
