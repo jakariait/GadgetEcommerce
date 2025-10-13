@@ -13,6 +13,7 @@ const subCategorySchema = new mongoose.Schema(
     },
     categoryId: { type: Number, required: true },
     slug: { type: String, trim: true, unique: true },
+    subCategoryImage: { type: String },
   },
   {
     timestamps: true,

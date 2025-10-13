@@ -3,7 +3,11 @@ const subCategoryService = require("../services/subCategoryService");
 // Create a new subcategory
 const createSubCategory = async (req, res) => {
   try {
-    const subCategory = await subCategoryService.createSubCategory(req.body);
+    const subCategoryData = req.body;
+    if (req.files && req.files.subCategoryImage) {
+      subCategoryData.subCategoryImage = req.files.subCategoryImage[0].filename;
+    }
+    const subCategory = await subCategoryService.createSubCategory(subCategoryData);
     res.status(201).json({ message: "Subcategory created successfully", subCategory });
   } catch (error) {
     res.status(400).json({ message: "Error creating subcategory: " + error.message });
@@ -33,7 +37,11 @@ const getSubCategoryById = async (req, res) => {
 // Update a subcategory
 const updateSubCategory = async (req, res) => {
   try {
-    const subCategory = await subCategoryService.updateSubCategory(req.params.id, req.body);
+    const subCategoryData = req.body;
+    if (req.files && req.files.subCategoryImage) {
+      subCategoryData.subCategoryImage = req.files.subCategoryImage[0].filename;
+    }
+    const subCategory = await subCategoryService.updateSubCategory(req.params.id, subCategoryData);
     res.status(200).json({ message: "Subcategory updated successfully", subCategory });
   } catch (error) {
     res.status(400).json({ message: "Error updating subcategory: " + error.message });

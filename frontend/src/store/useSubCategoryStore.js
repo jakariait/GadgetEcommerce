@@ -43,7 +43,10 @@ const useSubCategoryStore = create((set) => ({
       if (!token) throw new Error("Unauthorized: No token found");
 
       const response = await axios.post(`${apiUrl}/sub-category`, data, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+         },
       });
       set((state) => ({
         subCategories: [...state.subCategories, response.data],
@@ -64,7 +67,10 @@ const useSubCategoryStore = create((set) => ({
       if (!token) throw new Error("Unauthorized: No token found");
 
       const response = await axios.put(`${apiUrl}/sub-category/${id}`, data, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+         },
       });
       set((state) => ({
         subCategories: state.subCategories.map((sub) =>

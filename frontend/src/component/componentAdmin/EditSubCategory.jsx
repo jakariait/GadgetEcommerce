@@ -12,6 +12,7 @@ import {
   Snackbar,
   CircularProgress,
 } from "@mui/material";
+import ImageComponent from "../componentGeneral/ImageComponent.jsx";
 
 const EditSubCategory = () => {
   const { id } = useParams();
@@ -24,6 +25,7 @@ const EditSubCategory = () => {
   const navigate = useNavigate();
   const apiURL = import.meta.env.VITE_API_URL;
   const [categories, setCategories] = useState([]);
+  const [subCategoryImage, setSubCategoryImage] = useState(null);
 
   useEffect(() => {
     if (!id) return;
@@ -60,18 +62,22 @@ const EditSubCategory = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const formData = new FormData();
+    formData.append("name", subCategory?.name);
+    formData.append("category", subCategory?.category._id);
+    formData.append("isActive", subCategory?.isActive);
+    if (subCategoryImage) {
+      formData.append("subCategoryImage", subCategoryImage);
+    }
+
     try {
       const response = await axios.put(
         `${apiURL}/sub-category/${id}`,
-        {
-          name: subCategory?.name,
-          category: subCategory?.category._id,
-          isActive: subCategory?.isActive,
-        },
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -155,6 +161,17 @@ const EditSubCategory = () => {
                 <MenuItem value={"false"}>No</MenuItem>
               </Select>
             </FormControl>
+          </div>
+
+          <div className="space-y-2">
+            <label>Subcategory Image</label>
+            <input type="file" onChange={(e) => setSubCategoryImage(e.target.files[0])} className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100" />
+            {subCategory?.subCategoryImage && (
+              <ImageComponent
+                imageName={subCategory?.subCategoryImage}
+                className="w-40 h-40 mt-2 object-contain"
+              />
+            )}
           </div>
         </div>
 

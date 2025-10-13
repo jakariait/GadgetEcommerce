@@ -107,6 +107,10 @@ const upload = multer({ storage }).fields([
     name: "logo",
     maxCount: 1,
   },
+  {
+    name: "subCategoryImage",
+    maxCount: 1,
+  },
 ]);
 
 // Serve images from the 'uploads' folder as static files
@@ -339,12 +343,14 @@ router.post(
   "/sub-category",
   adminProtect,
   checkPermission("sub_category"),
+  upload,
   subCategoryController.createSubCategory,
 );
 router.put(
   "/sub-category/:id",
   adminProtect,
   checkPermission("sub_category"),
+  upload,
   subCategoryController.updateSubCategory,
 );
 router.delete(

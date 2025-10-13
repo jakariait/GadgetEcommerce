@@ -19,6 +19,7 @@ const AddSubCategory = () => {
   const { createSubCategory } = useSubCategoryStore(); // Access createSubCategory from the store
   const [selectedCategory, setSelectedCategory] = useState("");
   const [subCategoryName, setSubCategoryName] = useState("");
+  const [subCategoryImage, setSubCategoryImage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -51,14 +52,19 @@ const AddSubCategory = () => {
       return;
     }
 
+    const formData = new FormData();
+    formData.append("name", subCategoryName);
+    formData.append("category", selectedCategory);
+    if (subCategoryImage) {
+      formData.append("subCategoryImage", subCategoryImage);
+    }
+
     try {
-      await createSubCategory({
-        name: subCategoryName,
-        category: selectedCategory,
-      });
+      await createSubCategory(formData);
       showSnackbar("Subcategory created successfully!", "success");
       setSubCategoryName("");
       setSelectedCategory("");
+      setSubCategoryImage(null);
 
       setTimeout(() => {
         navigate("/admin/subcategorylist");
@@ -119,6 +125,15 @@ const AddSubCategory = () => {
                   placeholder="Sub Category Name"
                   value={subCategoryName}
                   onChange={(e) => setSubCategoryName(e.target.value)}
+                />
+              </Box>
+
+              <Box mb={2}>
+                <Typography>Subcategory Image</Typography>
+                <input
+                  type="file"
+                  onChange={(e) => setSubCategoryImage(e.target.files[0])}
+                  className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
                 />
               </Box>
 
