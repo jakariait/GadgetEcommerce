@@ -21,6 +21,7 @@ const AddCategory = () => {
   const [name, setName] = useState("");
   const [featureCategory, setFeatureCategory] = useState(true);
   const [showOnNavbar, setShowOnNavbar] = useState(true);
+  const [categoryImage, setCategoryImage] = useState(null);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,19 +36,21 @@ const AddCategory = () => {
       return;
     }
 
-    // Prepare the data to send as JSON
-    const categoryData = {
-      name,
-      featureCategory,
-      showOnNavbar,
-    };
+    // Prepare the data to send as FormData
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("featureCategory", featureCategory);
+    formData.append("showOnNavbar", showOnNavbar);
+    if (categoryImage) {
+      formData.append("categoryIcon", categoryImage);
+    }
 
     try {
       setIsLoading(true);
-      const response = await axios.post(`${apiUrl}/category`, categoryData, {
+      const response = await axios.post(`${apiUrl}/category`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json", // Sending JSON data
+          "Content-Type": "multipart/form-data",
         },
       });
 
@@ -56,6 +59,7 @@ const AddCategory = () => {
       setName("");
       setFeatureCategory(true);
       setShowOnNavbar(true);
+      setCategoryImage(null);
 
       // Wait for the snackbar message to appear
       setTimeout(() => {
@@ -95,6 +99,18 @@ const AddCategory = () => {
               required
               error={!name.trim()} // Show error if name is empty
               helperText={!name.trim() ? "Category name is required" : ""}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="category-image" className="block text-sm font-medium text-gray-700">
+              Category Image
+            </label>
+            <input
+              id="category-image"
+              type="file"
+              onChange={(e) => setCategoryImage(e.target.files[0])}
+              className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
             />
           </div>
 

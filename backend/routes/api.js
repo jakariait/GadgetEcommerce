@@ -315,12 +315,14 @@ router.post(
   "/category/",
   adminProtect,
   checkPermission("category"),
+  upload,
   categoryController.createCategory,
 );
 router.put(
   "/category/:id",
   adminProtect,
   checkPermission("category"),
+  upload,
   categoryController.updateCategory,
 );
 router.delete(

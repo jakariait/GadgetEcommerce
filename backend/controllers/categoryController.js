@@ -4,15 +4,17 @@ const CategoryModel = require("../models/CategoryModel");
 const createCategory = async (req, res) => {
   try {
     const { name, featureCategory, showOnNavbar } = req.body;
-
     const categoryData = {
       name,
       featureCategory,
       showOnNavbar,
     };
 
-    const category = new CategoryModel(categoryData);
-    await category.save();
+if (req.files && req.files.categoryIcon) {
+      categoryData.categoryImage = req.files.categoryIcon[0].filename;
+    }
+
+    const category = await categoryService.createCategory(categoryData);
     res
       .status(201)
       .json({ message: "Category created successfully", category });
@@ -60,12 +62,20 @@ const updateCategory = async (req, res) => {
       showOnNavbar,
     };
 
-    const category = await CategoryModel.findByIdAndUpdate(id, categoryData, {
-      new: true,
-    });
+    if (req.files && req.files.categoryIcon) {
+      categoryData.categoryImage = req.files.categoryIcon[0].filename;
+    }
+
+    const category = await categoryService.updateCategory(
+      id,
+      categoryData,
+      { new: true },
+    );
+
     if (!category) {
       return res.status(404).json({ message: "Category not found" });
     }
+
     res
       .status(200)
       .json({ message: "Category updated successfully", category });
