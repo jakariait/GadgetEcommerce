@@ -27,11 +27,21 @@ const MarqueeModern = () => {
   if (messages.length === 0) return null;
 
   return (
-    <div className="w-full overflow-hidden secondaryBgColor py-3">
-      <div className="marquee-track flex gap-12 whitespace-nowrap text-white text-sm sm:text-base font-medium animate-marquee">
-        {[...messages, ...messages].map((msg, index) => (
-          <span key={index}>{msg}</span>
-        ))}
+    <div className="xl:container xl:mx-auto">
+      <div className="mx-3 mb-3 rounded-lg shadow-sm p-3 overflow-hidden">
+        <div className="relative overflow-hidden">
+          <div
+            className="marquee-track flex gap-12 whitespace-nowrap text-sm sm:text-base font-medium animate-marquee"
+            style={{
+              paddingLeft: "5rem", // space before start
+              paddingRight: "5rem", // space after end
+            }}
+          >
+            {[...messages, ...messages].map((msg, index) => (
+              <span key={index}>{msg}</span>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
