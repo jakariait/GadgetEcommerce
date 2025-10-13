@@ -4,6 +4,7 @@ import ProductCarousel from "../component/componentGeneral/ProductCarousel.jsx";
 import Feature from "../component/componentGeneral/Feature.jsx";
 import ProductByFlag from "../component/componentGeneral/ProductByFlag.jsx";
 import AllBrands from "../component/componentGeneral/AllBrands.jsx";
+import FeatureCategory from "../component/componentGeneral/FeatureCategory.jsx";
 
 const HomePage = () => {
   return (
@@ -11,6 +12,7 @@ const HomePage = () => {
       <ProductCarousel />
       <Feature />
       <AllBrands/>
+      <FeatureCategory/>
       <ProductByFlag />
     </Layout>
   );

@@ -6,6 +6,10 @@ const createChildCategory = async (req, res) => {
   try {
     const childCategoryData = req.body;
 
+    if (req.files && req.files.childCategoryImage) {
+      childCategoryData.childCategoryImage = req.files.childCategoryImage[0].filename;
+    }
+
     if (!childCategoryData.name || !childCategoryData.category || !childCategoryData.subCategory) {
       return res.status(400).json({
         message: "Name, category, and subcategory are required fields.",
@@ -76,6 +80,10 @@ const getChildCategoryById = async (req, res) => {
 const updateChildCategory = async (req, res) => {
   const { id } = req.params;
   const updatedData = req.body;
+
+  if (req.files && req.files.childCategoryImage) {
+    updatedData.childCategoryImage = req.files.childCategoryImage[0].filename;
+  }
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({

@@ -47,7 +47,10 @@ const useChildCategoryStore = create((set) => ({
       if (!token) throw new Error("Unauthorized: No token found");
 
       const response = await axios.post(`${apiUrl}/child-category`, data, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+         },
       });
       set((state) => ({
         childCategories: [...state.childCategories, response.data],
@@ -69,7 +72,10 @@ const useChildCategoryStore = create((set) => ({
       if (!token) throw new Error("Unauthorized: No token found");
 
       const response = await axios.put(`${apiUrl}/child-category/${id}`, data, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+         },
       });
       set((state) => ({
         childCategories: state.childCategories.map((child) =>

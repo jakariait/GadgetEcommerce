@@ -34,7 +34,7 @@ const AllBrands = () => {
   }, [API_URL]);
 
   return (
-    <div className="xl:container xl:mx-auto pb-6 px-3">
+    <div className="xl:container  xl:mx-auto pb-6 px-3">
       <div className="flex items-center gap-4 my-6">
         <div className="flex-grow h-px bg-gray-400"></div>
         <h2 className="text-lg pl-10 pr-10 font-bold secondaryTextColor whitespace-nowrap uppercase tracking-widest">
@@ -56,7 +56,7 @@ const AllBrands = () => {
             <Link
               to={`/shop?page=1&limit=20&brand=${brand.slug}`}
               key={brand._id}
-              className="bg-white rounded-2xl shadow hover:shadow-lg transition duration-200 flex flex-col items-center p-1"
+              className="bg-white rounded-2xl shadow hover:shadow-lg transition duration-200 flex flex-col items-center p-3"
             >
               <ImageComponent
                 imageName={brand.logo}

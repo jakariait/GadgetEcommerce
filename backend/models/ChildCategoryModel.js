@@ -16,13 +16,14 @@ const childCategorySchema = new mongoose.Schema(
       ref: "SubCategory", // Reference to the SubCategory model
       required: true,
     },
-    categoryId: { type: Number}, // Auto-increment field
+    categoryId: { type: Number }, // Auto-increment field
     slug: { type: String, trim: true, unique: true },
+    childCategoryImage: { type: String },
   },
   {
     timestamps: true,
     versionKey: false,
-  }
+  },
 );
 
 // Pre-save hook for categoryId auto-increment and slug generation
@@ -32,7 +33,7 @@ childCategorySchema.pre("save", async function (next) {
       const counter = await CounterModel.findOneAndUpdate(
         { name: "SubCategory" },
         { $inc: { value: 1 } },
-        { new: true, upsert: true }
+        { new: true, upsert: true },
       );
 
       this.categoryId = counter.value;
@@ -47,6 +48,8 @@ childCategorySchema.pre("save", async function (next) {
   }
 });
 
-const ChildCategory = mongoose.models.ChildCategory || mongoose.model("ChildCategory", childCategorySchema);
+const ChildCategory =
+  mongoose.models.ChildCategory ||
+  mongoose.model("ChildCategory", childCategorySchema);
 
 module.exports = ChildCategory;

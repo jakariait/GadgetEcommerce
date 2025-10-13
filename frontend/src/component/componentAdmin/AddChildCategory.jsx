@@ -24,6 +24,7 @@ const AddChildCategory = () => {
   const [filteredSubCategories, setFilteredSubCategories] = useState([]);
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [childCategoryName, setChildCategoryName] = useState("");
+  const [childCategoryImage, setChildCategoryImage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -69,17 +70,22 @@ const AddChildCategory = () => {
       return;
     }
 
+    const formData = new FormData();
+    formData.append("name", childCategoryName);
+    formData.append("category", selectedCategory);
+    formData.append("subCategory", selectedSubCategory);
+    if (childCategoryImage) {
+      formData.append("childCategoryImage", childCategoryImage);
+    }
+
     try {
-      await createChildCategory({
-        name: childCategoryName,
-        category: selectedCategory,
-        subCategory: selectedSubCategory,
-      });
+      await createChildCategory(formData);
 
       showSnackbar("Child category created successfully!", "success");
       setChildCategoryName("");
       setSelectedCategory("");
       setSelectedSubCategory("");
+      setChildCategoryImage(null);
 
       // Redirect to child category list after delay
       setTimeout(() => navigate("/admin/childcategorylist"), 2000);
@@ -154,6 +160,16 @@ const AddChildCategory = () => {
               placeholder="Child Category Name"
               value={childCategoryName}
               onChange={(e) => setChildCategoryName(e.target.value)}
+            />
+          </Box>
+
+          {/* Child Category Image Input */}
+          <Box mb={2}>
+            <Typography>Child Category Image</Typography>
+            <input
+              type="file"
+              onChange={(e) => setChildCategoryImage(e.target.files[0])}
+              className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
             />
           </Box>
 

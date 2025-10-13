@@ -13,6 +13,7 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
+import ImageComponent from "../componentGeneral/ImageComponent.jsx";
 
 const EditChildCategory = () => {
   const { id } = useParams();
@@ -20,16 +21,23 @@ const EditChildCategory = () => {
 
   const { categories, fetchCategories } = useCategoryStore();
   const { subCategories, fetchSubCategories } = useSubCategoryStore();
-  const { selectedChildCategory, fetchChildCategoryById, updateChildCategory, loading } = useChildCategoryStore();
+  const {
+    selectedChildCategory,
+    fetchChildCategoryById,
+    updateChildCategory,
+    loading,
+  } = useChildCategoryStore();
 
   const [selectedCategory, setSelectedCategory] = useState("");
   const [filteredSubCategories, setFilteredSubCategories] = useState([]);
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [childCategoryName, setChildCategoryName] = useState("");
+  const [childCategoryImage, setChildCategoryImage] = useState(null);
   const [isActive, setIsActive] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const apiURL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     fetchCategories();
@@ -38,13 +46,21 @@ const EditChildCategory = () => {
   }, [id]);
 
   useEffect(() => {
-    if (selectedChildCategory && selectedChildCategory.childCategory && Object.keys(selectedChildCategory.childCategory).length > 0) {
+    if (
+      selectedChildCategory &&
+      selectedChildCategory.childCategory &&
+      Object.keys(selectedChildCategory.childCategory).length > 0
+    ) {
       const childCategoryData = selectedChildCategory.childCategory;
 
       setChildCategoryName(childCategoryData.name || "");
 
-      const categoryId = categories.find(cat => cat.name === childCategoryData.category.name)?._id;
-      const subCategoryId = subCategories.find(sub => sub.name === childCategoryData.subCategory.name)?._id;
+      const categoryId = categories.find(
+        (cat) => cat.name === childCategoryData.category.name,
+      )?._id;
+      const subCategoryId = subCategories.find(
+        (sub) => sub.name === childCategoryData.subCategory.name,
+      )?._id;
 
       setSelectedCategory(categoryId || "");
       setSelectedSubCategory(subCategoryId || "");
@@ -54,7 +70,9 @@ const EditChildCategory = () => {
 
   useEffect(() => {
     if (selectedCategory) {
-      const filteredSubs = subCategories.filter(sub => sub.category._id === selectedCategory);
+      const filteredSubs = subCategories.filter(
+        (sub) => sub.category._id === selectedCategory,
+      );
       setFilteredSubCategories(filteredSubs);
     }
   }, [selectedCategory, subCategories]);
@@ -78,15 +96,17 @@ const EditChildCategory = () => {
       return;
     }
 
-    console.log("isActive value before submission:", isActive); // Debugging line
+    const formData = new FormData();
+    formData.append("name", childCategoryName);
+    formData.append("category", selectedCategory);
+    formData.append("subCategory", selectedSubCategory);
+    formData.append("isActive", isActive);
+    if (childCategoryImage) {
+      formData.append("childCategoryImage", childCategoryImage);
+    }
 
     try {
-      await updateChildCategory(id, {
-        name: childCategoryName,
-        category: selectedCategory,
-        subCategory: selectedSubCategory,
-        isActive, // This should now be a boolean value
-      });
+      await updateChildCategory(id, formData);
 
       showSnackbar("Child category updated successfully!");
       setTimeout(() => navigate("/admin/childcategorylist"), 2000);
@@ -120,7 +140,9 @@ const EditChildCategory = () => {
               fullWidth
               required
               error={!childCategoryName}
-              helperText={!childCategoryName ? "Child category name is required" : ""}
+              helperText={
+                !childCategoryName ? "Child category name is required" : ""
+              }
             />
           </div>
 
@@ -177,6 +199,23 @@ const EditChildCategory = () => {
               </Select>
             </FormControl>
           </div>
+
+          <div className="space-y-2">
+            <label>Child Category Image</label>
+            <input
+              type="file"
+              onChange={(e) => setChildCategoryImage(e.target.files[0])}
+              className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+            />
+            {selectedChildCategory?.childCategory?.childCategoryImage && (
+              <ImageComponent
+                imageName={
+                  selectedChildCategory?.childCategory?.childCategoryImage
+                }
+                className="w-40 h-40 mt-2 object-contain"
+              />
+            )}
+          </div>
         </div>
 
         <div className="flex justify-center">
@@ -185,7 +224,11 @@ const EditChildCategory = () => {
             variant="contained"
             color="primary"
             disabled={isSubmitting}
-            startIcon={isSubmitting ? <CircularProgress size={20} color="inherit" /> : null}
+            startIcon={
+              isSubmitting ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : null
+            }
           >
             {isSubmitting ? "Saving..." : "Save Child Category"}
           </Button>
