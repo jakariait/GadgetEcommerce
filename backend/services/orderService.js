@@ -7,7 +7,7 @@ const Shipping = require("../models/ShippingModel");
 const FreeDeliveryAmount = require("../models/FreeDeliveryAmount");
 const User = require("../models/UserModel");
 const Coupon = require("../models/CouponModel");
-const ProductSizeModel = require("../models/ProductSizeModel"); // Import the ProductSizeModel
+const ProductOptionModel = require("../models/ProductOptionModel"); // Import the ProductOptionModel
 
 const createOrder = async (orderData, userId) => {
   const session = await mongoose.startSession();
@@ -182,11 +182,14 @@ const getAllOrders = async (filter = {}, page, limit, search = '') => {
         path: "items.productId",
         select:
           "-sizeChart -longDesc -shortDesc -shippingReturn -videoUrl -flags -metaTitle -metaDescription -metaKeywords -searchTags",
+        populate: {
+          path: "variants.attributes.option",
+          model: "ProductOption",
+          select: "name"
+        }
       })
-      .populate("items.variantId")
       .sort({ createdAt: -1 });
 
-    // Only apply pagination if page and limit are valid
     let totalOrders = await Order.countDocuments(queryFilter);
     let orders;
     let totalPages = null;
@@ -197,12 +200,26 @@ const getAllOrders = async (filter = {}, page, limit, search = '') => {
       const validatedLimit = Math.max(1, parseInt(limit));
       const skip = (validatedPage - 1) * validatedLimit;
 
-      orders = await query.skip(skip).limit(validatedLimit);
+      orders = await query.skip(skip).limit(validatedLimit).lean();
       totalPages = Math.ceil(totalOrders / validatedLimit);
       currentPage = validatedPage;
     } else {
-      orders = await query;
+      orders = await query.lean();
     }
+
+    orders.forEach(order => {
+        order.items.forEach(item => {
+            if (item.productId && item.productId.variants && item.variantId) {
+                const variant = item.productId.variants.find(v => v._id.toString() === item.variantId.toString());
+                if (variant && variant.attributes) {
+                    item.variantDetails = variant.attributes.map(attr => ({
+                        option: attr.option ? attr.option.name : 'N/A',
+                        value: attr.value
+                    }));
+                }
+            }
+        });
+    });
 
     return {
       totalOrders,
@@ -225,60 +242,36 @@ const getOrderById = async (orderId) => {
         path: "items.productId",
         select:
           "-sizeChart -longDesc -shortDesc -shippingReturn -videoUrl -flags -metaTitle -metaDescription -metaKeywords -searchTags",
-        populate: {
-          path: "category",
-          select: "name", // Only bring category name
-        },
+        populate: [
+          {
+            path: "category",
+            select: "name",
+          },
+          {
+            path: "variants.attributes.option",
+            model: "ProductOption",
+            select: "name",
+          },
+        ],
       })
-      .populate({
-        path: "items.variantId",
-      })
-      .sort({ createdAt: -1 })
       .lean();
 
     if (!order) {
       throw new Error("Order not found");
     }
 
-    // Collect all unique size IDs for the selected variants
-    const sizeIds = new Set();
     order.items.forEach((item) => {
-      if (item.productId && item.productId.variants.length > 0) {
-        const matchedVariant = item.productId.variants.find(
-          (variant) => variant._id.toString() === item.variantId.toString(),
+      if (item.productId && item.productId.variants && item.variantId) {
+        const variant = item.productId.variants.find(
+          (v) => v._id.toString() === item.variantId.toString()
         );
-        if (matchedVariant && matchedVariant.size) {
-          sizeIds.add(matchedVariant.size); // Add the size ID of the matched variant
+        if (variant && variant.attributes) {
+          item.variantDetails = variant.attributes.map((attr) => ({
+            option: attr.option ? attr.option.name : "N/A",
+            value: attr.value,
+          }));
         }
       }
-    });
-
-    // Fetch all size names in one query
-    const sizes = await ProductSizeModel.find({
-      _id: { $in: Array.from(sizeIds) },
-    })
-      .select("name")
-      .lean();
-    const sizeMap = new Map(
-      sizes.map((size) => [size._id.toString(), size.name]),
-    );
-
-    // Iterate through items and remove non-matched variants, set size name for the matched variant only
-    order.items = order.items.map((item) => {
-      if (item.productId && item.productId.variants) {
-        // Filter variants to keep only the matched variant
-        item.productId.variants = item.productId.variants.filter(
-          (variant) => variant._id.toString() === item.variantId.toString(),
-        );
-
-        // If a matched variant is found, set its size name
-        if (item.productId.variants.length > 0) {
-          const variant = item.productId.variants[0]; // The matched variant
-          const sizeId = variant.size;
-          variant.sizeName = sizeMap.get(sizeId.toString()) || "N/A"; // Set size name for the matched variant
-        }
-      }
-      return item;
     });
 
     return order;
@@ -478,58 +471,36 @@ const getOrderByOrderNo = async (orderNo) => {
         path: "items.productId",
         select:
           "-sizeChart -longDesc -shortDesc -shippingReturn -videoUrl -flags -metaTitle -metaDescription -metaKeywords -searchTags",
-        populate: {
-          path: "category",
-          select: "name",
-        },
+        populate: [
+          {
+            path: "category",
+            select: "name",
+          },
+          {
+            path: "variants.attributes.option",
+            model: "ProductOption",
+            select: "name",
+          },
+        ],
       })
-      .populate({
-        path: "items.variantId",
-      })
-      .sort({ createdAt: -1 })
       .lean();
 
     if (!order) {
       throw new Error("Order not found");
     }
 
-    // Collect all unique size IDs for the selected variants
-    const sizeIds = new Set();
     order.items.forEach((item) => {
-      if (item.productId && item.productId.variants.length > 0) {
-        const matchedVariant = item.productId.variants.find(
-          (variant) => variant._id.toString() === item.variantId.toString(),
+      if (item.productId && item.productId.variants && item.variantId) {
+        const variant = item.productId.variants.find(
+          (v) => v._id.toString() === item.variantId.toString()
         );
-        if (matchedVariant && matchedVariant.size) {
-          sizeIds.add(matchedVariant.size);
+        if (variant && variant.attributes) {
+          item.variantDetails = variant.attributes.map((attr) => ({
+            option: attr.option ? attr.option.name : "N/A",
+            value: attr.value,
+          }));
         }
       }
-    });
-
-    // Fetch all size names in one query
-    const sizes = await ProductSizeModel.find({
-      _id: { $in: Array.from(sizeIds) },
-    })
-      .select("name")
-      .lean();
-    const sizeMap = new Map(
-      sizes.map((size) => [size._id.toString(), size.name]),
-    );
-
-    // Clean up and assign size names
-    order.items = order.items.map((item) => {
-      if (item.productId && item.productId.variants) {
-        item.productId.variants = item.productId.variants.filter(
-          (variant) => variant._id.toString() === item.variantId.toString(),
-        );
-
-        if (item.productId.variants.length > 0) {
-          const variant = item.productId.variants[0];
-          const sizeId = variant.size;
-          variant.sizeName = sizeMap.get(sizeId.toString()) || "N/A";
-        }
-      }
-      return item;
     });
 
     return order;
@@ -545,13 +516,17 @@ const getOrdersByUserId = async (userId) => {
         path: "items.productId",
         select:
           "-sizeChart -longDesc -shortDesc -shippingReturn -videoUrl -flags -metaTitle -metaDescription -metaKeywords -searchTags",
-        populate: {
-          path: "category",
-          select: "name",
-        },
-      })
-      .populate({
-        path: "items.variantId",
+        populate: [
+          {
+            path: "category",
+            select: "name",
+          },
+          {
+            path: "variants.attributes.option",
+            model: "ProductOption",
+            select: "name",
+          },
+        ],
       })
       .sort({ createdAt: -1 })
       .lean();
@@ -562,59 +537,23 @@ const getOrdersByUserId = async (userId) => {
       throw new Error("No orders found for this user");
     }
 
-    // Collect all unique size IDs from all orders
-    const sizeIds = new Set();
-
-    orders.forEach((order) => {
-      order.items?.forEach((item) => {
-        if (item?.productId?.variants?.length > 0 && item?.variantId) {
-          const matchedVariant = item.productId.variants.find(
-            (variant) =>
-              variant?._id?.toString() === item.variantId?.toString(),
-          );
-
-          if (matchedVariant?.size) {
-            sizeIds.add(matchedVariant.size);
-          }
-        }
-      });
-    });
-
-    // Fetch all size names in one query
-    const sizes = await ProductSizeModel.find({
-      _id: { $in: Array.from(sizeIds) },
-    })
-      .select("name")
-      .lean();
-
-    const sizeMap = new Map(
-      sizes.map((size) => [size._id.toString(), size.name]),
-    );
-
-    // Clean up and assign size names to all orders
-    const updatedOrders = orders.map((order) => {
-      order.items = order.items.map((item) => {
-        if (item?.productId?.variants?.length > 0 && item?.variantId) {
-          item.productId.variants = item.productId.variants.filter(
-            (variant) =>
-              variant?._id?.toString() === item.variantId?.toString(),
-          );
-
-          if (item.productId.variants.length > 0) {
-            const variant = item.productId.variants[0];
-            const sizeId = variant.size;
-            variant.sizeName = sizeMap.get(sizeId?.toString()) || "N/A";
-          }
-        }
-        return item;
-      });
-
-      return order;
+    orders.forEach(order => {
+        order.items.forEach(item => {
+            if (item.productId && item.productId.variants && item.variantId) {
+                const variant = item.productId.variants.find(v => v._id.toString() === item.variantId.toString());
+                if (variant && variant.attributes) {
+                    item.variantDetails = variant.attributes.map(attr => ({
+                        option: attr.option ? attr.option.name : 'N/A',
+                        value: attr.value
+                    }));
+                }
+            }
+        });
     });
 
     return {
       totalOrders,
-      orders: updatedOrders,
+      orders,
     };
   } catch (error) {
     throw new Error("Error fetching orders by userId: " + error.message);
@@ -628,12 +567,18 @@ const trackOrderByOrderNoAndPhone = async (orderNo, phone) => {
       path: "items.productId",
       select:
         "-sizeChart -longDesc -shortDesc -shippingReturn -videoUrl -flags -metaTitle -metaDescription -metaKeywords -searchTags",
-      populate: {
-        path: "category",
-        select: "name",
-      },
+      populate: [
+          {
+            path: "category",
+            select: "name",
+          },
+          {
+            path: "variants.attributes.option",
+            model: "ProductOption",
+            select: "name",
+          },
+        ],
     })
-    .populate("items.variantId")
     .lean();
 
   if (!order) {
@@ -650,41 +595,19 @@ const trackOrderByOrderNoAndPhone = async (orderNo, phone) => {
     throw new Error("Phone number does not match order");
   }
 
-  // --- Size logic (no change) ---
-  const sizeIds = new Set();
   order.items.forEach((item) => {
-    if (item.productId?.variants?.length > 0) {
-      const matchedVariant = item.productId.variants.find(
-        (variant) => variant._id.toString() === item.variantId.toString()
-      );
-      if (matchedVariant?.size) {
-        sizeIds.add(matchedVariant.size);
+      if (item.productId && item.productId.variants && item.variantId) {
+        const variant = item.productId.variants.find(
+          (v) => v._id.toString() === item.variantId.toString()
+        );
+        if (variant && variant.attributes) {
+          item.variantDetails = variant.attributes.map((attr) => ({
+            option: attr.option ? attr.option.name : "N/A",
+            value: attr.value,
+          }));
+        }
       }
-    }
-  });
-
-  const sizes = await ProductSizeModel.find({
-    _id: { $in: Array.from(sizeIds) },
-  })
-    .select("name")
-    .lean();
-
-  const sizeMap = new Map(sizes.map((size) => [size._id.toString(), size.name]));
-
-  order.items = order.items.map((item) => {
-    if (item.productId?.variants) {
-      item.productId.variants = item.productId.variants.filter(
-        (variant) => variant._id.toString() === item.variantId.toString()
-      );
-
-      if (item.productId.variants.length > 0) {
-        const variant = item.productId.variants[0];
-        const sizeId = variant.size;
-        variant.sizeName = sizeMap.get(sizeId.toString()) || "N/A";
-      }
-    }
-    return item;
-  });
+    });
 
   return order;
 };

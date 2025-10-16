@@ -14,13 +14,13 @@ import {
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import useProductSizeStore from "../../store/useProductSizeStore.js";
+import useProductOptionStore from "../../store/useProductOptionStore.js";
 import Skeleton from "react-loading-skeleton";
 
-const ProductSizeManager = () => {
+const ProductOptionManager = () => {
   const navigate = useNavigate();
-  const { productSizes, loading, fetchProductSizes, deleteProductSize } =
-    useProductSizeStore();
+  const { productOptions, loading, fetchProductOptions, deleteProductOption } =
+    useProductOptionStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -28,29 +28,29 @@ const ProductSizeManager = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
   useEffect(() => {
-    fetchProductSizes();
-  }, [fetchProductSizes]);
+    fetchProductOptions();
+  }, [fetchProductOptions]);
 
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this size?")) {
-      deleteProductSize(id);
-      setSnackbarMessage("Size deleted successfully!");
+    if (window.confirm("Are you sure you want to delete this option?")) {
+      deleteProductOption(id);
+      setSnackbarMessage("Option deleted successfully!");
       setOpenSnackbar(true);
     }
   };
 
-  const filteredSizes = productSizes.filter((size) =>
-    size.name?.toLowerCase().includes(searchTerm.toLowerCase() || ""),
+  const filteredOptions = productOptions.filter((option) =>
+    option.name?.toLowerCase().includes(searchTerm.toLowerCase() || ""),
   );
 
   return (
     <div className="shadow rounded-xl p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="border-l-4 primaryBorderColor primaryTextColor mb-6 pl-2 text-lg font-semibold ">
-          Product Size List
+          Product Option List
         </h1>
         <TextField
-          label="Search Size"
+          label="Search by Name"
           variant="outlined"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -77,7 +77,7 @@ const ProductSizeManager = () => {
                     <b>Name</b>
                   </TableCell>
                   <TableCell>
-                    <b>Active</b>
+                    <b>Values</b>
                   </TableCell>
                   <TableCell>
                     <b>Actions</b>
@@ -85,23 +85,23 @@ const ProductSizeManager = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredSizes
+                {filteredOptions
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((size) => (
-                    <TableRow key={size._id}>
-                      <TableCell>{size.name}</TableCell>
-                      <TableCell>{size.isActive ? "Yes" : "No"}</TableCell>
+                  .map((option) => (
+                    <TableRow key={option._id}>
+                      <TableCell>{option.name}</TableCell>
+                      <TableCell>{option.values.join(', ')}</TableCell>
                       <TableCell>
                         <IconButton
                           onClick={() =>
-                            navigate(`/admin/edit-product-size/${size._id}`)
+                            navigate(`/admin/edit-product-option/${option._id}`)
                           }
                           color="primary"
                         >
                           <Edit />
                         </IconButton>
                         <IconButton
-                          onClick={() => handleDelete(size._id)}
+                          onClick={() => handleDelete(option._id)}
                           color="error"
                         >
                           <Delete />
@@ -116,7 +116,7 @@ const ProductSizeManager = () => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={filteredSizes.length}
+            count={filteredOptions.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={(event, newPage) => setPage(newPage)}
@@ -138,4 +138,4 @@ const ProductSizeManager = () => {
   );
 };
 
-export default ProductSizeManager;
+export default ProductOptionManager;

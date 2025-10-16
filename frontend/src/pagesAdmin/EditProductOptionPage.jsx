@@ -1,19 +1,18 @@
 import React from "react";
 import LayoutAdmin from "../component/componentAdmin/LayoutAdmin.jsx";
 import Breadcrumb from "../component/componentAdmin/Breadcrumb.jsx";
-import EditProductSize from "../component/componentAdmin/EditProductSize.jsx";
+import EditProductOption from "../component/componentAdmin/EditProductOption.jsx";
 import RequirePermission from "../component/componentAdmin/RequirePermission.jsx";
-import ProductSizeManager from "../component/componentAdmin/ProductSizeManager.jsx";
 
-const EditProductSizePage = () => {
+const EditProductOptionPage = () => {
   return (
     <LayoutAdmin>
-      <Breadcrumb pageDetails="PRODUCT SIZE" title="View all Product Size" />
+      <Breadcrumb pageDetails="PRODUCT OPTION" title="View all Product Option" />
       <RequirePermission permission="product_size">
-        <EditProductSize />
+        <EditProductOption />
       </RequirePermission>
     </LayoutAdmin>
   );
 };
 
-export default EditProductSizePage;
+export default EditProductOptionPage;

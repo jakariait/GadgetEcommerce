@@ -1,6 +1,6 @@
 const AbandonedCart = require("../models/AbandonedCartModel");
 const Product = require("../models/ProductModel");
-const ProductSizeModel = require("../models/ProductSizeModel"); // Import the ProductSizeModel
+const ProductOptionModel = require("../models/ProductOptionModel"); // Import the ProductOptionModel
 
 const createAbandonedCart = async (cartData) => {
   try {
@@ -45,11 +45,14 @@ const getAllAbandonedCarts = async (page = 1, limit = 10) => {
 
     const products = await Product.find({ _id: { $in: allProductIds } })
       .populate("category", "name")
+      .populate({
+        path: "variants.attributes.option",
+        model: "ProductOption",
+        select: "name"
+      })
       .lean();
 
     const productMap = new Map(products.map((p) => [p._id.toString(), p]));
-
-    const sizeIds = new Set();
 
     carts.forEach((cart) => {
       cart.cartItems = cart.cartItems.map((item) => {
@@ -61,14 +64,10 @@ const getAllAbandonedCarts = async (page = 1, limit = 10) => {
           );
 
           if (matchedVariant) {
-            if (matchedVariant.size) {
-              sizeIds.add(matchedVariant.size.toString());
-            }
-
-            item.variant = {
-              ...matchedVariant,
-              size: matchedVariant.size?.toString(), // normalize
-            };
+            item.variantDetails = matchedVariant.attributes.map(attr => ({
+                option: attr.option ? attr.option.name : 'N/A',
+                value: attr.value
+            }));
           }
 
           item.product = {
@@ -88,22 +87,6 @@ const getAllAbandonedCarts = async (page = 1, limit = 10) => {
         }
 
         return item;
-      });
-    });
-
-    const sizes = await ProductSizeModel.find({
-      _id: { $in: Array.from(sizeIds) },
-    })
-      .select("name")
-      .lean();
-
-    const sizeMap = new Map(sizes.map((s) => [s._id.toString(), s.name]));
-
-    carts.forEach((cart) => {
-      cart.cartItems.forEach((item) => {
-        if (item.variant?.size) {
-          item.variant.sizeName = sizeMap.get(item.variant.size) || "N/A";
-        }
       });
     });
 

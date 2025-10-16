@@ -4,7 +4,7 @@ import useCategoryStore from "../../store/useCategoryStore.js";
 import useSubCategoryStore from "../../store/useSubCategoryStore.js";
 import useChildCategoryStore from "../../store/useChildCategoryStore.js";
 import useFlagStore from "../../store/useFlagStore.js";
-import useProductSizeStore from "../../store/useProductSizeStore.js";
+import useProductOptionStore from "../../store/useProductOptionStore.js";
 import useBrandStore from "../../store/useBrandStore.js"; // Added for brand selection
 import AuthAdminStore from "../../store/AuthAdminStore.js";
 import useProductStore from "../../store/useProductStore.js"; // Only for update mode
@@ -33,7 +33,7 @@ import {
   TableCell,
   Switch,
   Snackbar,
-  Alert,
+  Alert, IconButton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
@@ -47,7 +47,7 @@ const ProductForm = ({ isEditMode = false }) => {
   const { subCategories } = useSubCategoryStore();
   const { childCategories } = useChildCategoryStore();
   const { flags } = useFlagStore();
-  const { productSizes } = useProductSizeStore();
+  const { productOptions, fetchProductOptions } = useProductOptionStore();
   const apiUrl = import.meta.env.VITE_API_URL;
   const { token } = AuthAdminStore();
   const navigate = useNavigate();
@@ -81,9 +81,7 @@ const ProductForm = ({ isEditMode = false }) => {
   const [purchasePrice, setPurchasePrice] = useState("");
   const [selectedFlags, setSelectedFlags] = useState([]);
   const [hasVariant, setHasVariant] = useState(true);
-  const [variants, setVariants] = useState([
-    { size: "", stock: "", price: "", discount: "" },
-  ]);
+  const [variants, setVariants] = useState([{ attributes: [{ option: "", value: "" }], stock: "", price: "", discount: "" }]);
   const [isActive, setIsActive] = useState("true"); // Default to active for new products
   const [specification, setSpecification] = useState([
     { title: "", specs: [{ label: "", value: "" }] },
@@ -112,7 +110,8 @@ const ProductForm = ({ isEditMode = false }) => {
       fetchProductBySlug(slug);
     }
     fetchBrands(); // Fetch brands on component mount
-  }, [isEditMode, slug, fetchProductBySlug, fetchBrands]);
+    fetchProductOptions(); // Fetch product options on component mount
+  }, [isEditMode, slug, fetchProductBySlug, fetchBrands, fetchProductOptions]);
 
   // Effect to populate form fields when product data is loaded (edit mode)
   useEffect(() => {
@@ -171,7 +170,7 @@ const ProductForm = ({ isEditMode = false }) => {
       if (product.variants && product.variants.length > 0) {
         setVariants(
           product.variants.map((v) => ({
-            size: v.size._id,
+            attributes: v.attributes.map(attr => ({ option: attr.option._id, value: attr.value })),
             stock: v.stock,
             price: v.price,
             discount: v.discount || "",
@@ -179,7 +178,7 @@ const ProductForm = ({ isEditMode = false }) => {
         );
         setHasVariant(true);
       } else {
-        setVariants([{ size: "", stock: "", price: "", discount: "" }]); // Ensure at least one empty variant for input
+        setVariants([{ attributes: [{ option: "", value: "" }], stock: "", price: "", discount: "" }]);
         setHasVariant(false);
       }
 
@@ -199,7 +198,7 @@ const ProductForm = ({ isEditMode = false }) => {
   const handleAddVariant = () => {
     setVariants([
       ...variants,
-      { size: "", stock: "", price: "", discount: "" },
+      { attributes: [{ option: "", value: "" }], stock: "", price: "", discount: "" },
     ]);
   };
 
@@ -242,6 +241,18 @@ const ProductForm = ({ isEditMode = false }) => {
     if (imagesInputRef.current) {
       imagesInputRef.current.value = "";
     }
+  };
+
+  const handleAddAttribute = (variantIndex) => {
+    const updatedVariants = [...variants];
+    updatedVariants[variantIndex].attributes.push({ option: "", value: "" });
+    setVariants(updatedVariants);
+  };
+
+  const handleRemoveAttribute = (variantIndex, attributeIndex) => {
+    const updatedVariants = [...variants];
+    updatedVariants[variantIndex].attributes.splice(attributeIndex, 1);
+    setVariants(updatedVariants);
   };
 
   const handleImageChange = (e) => {
@@ -483,7 +494,8 @@ const ProductForm = ({ isEditMode = false }) => {
 
     const processedVariants = variants.filter(
       (variant) =>
-        variant.size &&
+        variant.attributes.length > 0 &&
+        variant.attributes.every(attr => attr.option && attr.value) &&
         variant.price &&
         variant.stock !== "" &&
         variant.stock != null,
@@ -491,8 +503,12 @@ const ProductForm = ({ isEditMode = false }) => {
 
     if (hasVariant && processedVariants.length > 0) {
       processedVariants.forEach((variant, index) => {
-        Object.keys(variant).forEach((key) => {
-          formData.append(`variants[${index}][${key}]`, variant[key]);
+        formData.append(`variants[${index}][stock]`, variant.stock);
+        formData.append(`variants[${index}][price]`, variant.price);
+        formData.append(`variants[${index}][discount]`, variant.discount);
+        variant.attributes.forEach((attr, attrIndex) => {
+          formData.append(`variants[${index}][attributes][${attrIndex}][option]`, attr.option);
+          formData.append(`variants[${index}][attributes][${attrIndex}][value]`, attr.value);
         });
       });
     }
@@ -1362,7 +1378,7 @@ const ProductForm = ({ isEditMode = false }) => {
                   <Table sx={{ minWidth: 600 }}>
                     <TableHead>
                       <TableRow>
-                        <TableCell>Size</TableCell>
+                        <TableCell>Attributes</TableCell>
                         <TableCell>Stock *</TableCell>
                         <TableCell>Price *</TableCell>
                         <TableCell>Disc. Price *</TableCell>
@@ -1373,27 +1389,62 @@ const ProductForm = ({ isEditMode = false }) => {
                       {variants.map((variant, index) => (
                         <TableRow key={index}>
                           <TableCell>
-                            <TextField
-                              select
-                              fullWidth
-                              value={variant.size}
-                              required={true}
-                              onChange={(e) => {
-                                const updatedVariants = [...variants];
-                                updatedVariants[index].size = e.target.value;
-                                setVariants(updatedVariants);
-                              }}
-                              sx={{ width: "150px" }}
+                            {variant.attributes.map((attr, attrIndex) => (
+                                <Box key={attrIndex} display="flex" alignItems="center" gap={1} mb={1}>
+                                    <TextField
+                                        select
+                                        label="Option"
+                                        value={attr.option}
+                                        onChange={(e) => {
+                                            const updatedVariants = [...variants];
+                                            updatedVariants[index].attributes[attrIndex].option = e.target.value;
+                                            updatedVariants[index].attributes[attrIndex].value = ''; // Reset value
+                                            setVariants(updatedVariants);
+                                        }}
+                                        sx={{ width: "120px" }}
+                                    >
+                                        {productOptions.map((option) => (
+                                            <MenuItem key={option._id} value={option._id}>
+                                                {option.name}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
+                                    <TextField
+                                        select
+                                        label="Value"
+                                        value={attr.value}
+                                        onChange={(e) => {
+                                            const updatedVariants = [...variants];
+                                            updatedVariants[index].attributes[attrIndex].value = e.target.value;
+                                            setVariants(updatedVariants);
+                                        }}
+                                        sx={{ width: "120px" }}
+                                        disabled={!attr.option}
+                                    >
+                                        {attr.option &&
+                                            productOptions.find((o) => o._id === attr.option)?.values.map((val) => (
+                                                <MenuItem key={val} value={val}>
+                                                    {val}
+                                                </MenuItem>
+                                            ))}
+                                    </TextField>
+                                    <IconButton
+                                        color="error"
+                                        size="small"
+                                        onClick={() => handleRemoveAttribute(index, attrIndex)}
+                                    >
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </Box>
+                            ))}
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                onClick={() => handleAddAttribute(index)}
                             >
-                              {productSizes
-                                .filter((size) => size.isActive) // Filter only active sizes
-                                .map((size) => (
-                                  <MenuItem key={size._id} value={size._id}>
-                                    {size.name}
-                                  </MenuItem>
-                                ))}
-                            </TextField>
-                          </TableCell>
+                                + Add Attribute
+                            </Button>
+                        </TableCell>
                           <TableCell>
                             <TextField
                               type="number"

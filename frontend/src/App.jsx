@@ -14,7 +14,7 @@ import FeatureStore from "./store/FeatureStore.js";
 import CategoryStore from "./store/useCategoryStore.js";
 import SubCategoryStore from "./store/useSubCategoryStore.js";
 import useSocialMediaLinkStore from "./store/SocialMediaLinkStore.js";
-import useProductSizeStore from "./store/useProductSizeStore.js";
+import useProductOptionStore from "./store/useProductOptionStore.js";
 import useFlagStore from "./store/useFlagStore.js";
 import useChildCategoryStore from "./store/useChildCategoryStore.js";
 import useProductStore from "./store/useProductStore.js";
@@ -32,9 +32,9 @@ import EditSubCategoryPage from "./pagesAdmin/EditSubCategoryPage.jsx";
 import ChildCategoryListPage from "./pagesAdmin/ChildCategoryListPage.jsx";
 import AddNewChildCategoryPage from "./pagesAdmin/AddNewChildCategoryPage.jsx";
 import EditChildCategoryPage from "./pagesAdmin/EditChildCategoryPage.jsx";
-import AddNewProductSizePage from "./pagesAdmin/AddNewProductSizePage.jsx";
-import ProductSizeListPage from "./pagesAdmin/ProductSizeListPage.jsx";
-import EditProductSizePage from "./pagesAdmin/EditProductSizePage.jsx";
+import AddNewProductOptionPage from "./pagesAdmin/AddNewProductOptionPage.jsx";
+import ProductOptionListPage from "./pagesAdmin/ProductOptionListPage.jsx";
+import EditProductOptionPage from "./pagesAdmin/EditProductOptionPage.jsx";
 import ProductFlagPage from "./pagesAdmin/ProductFlagPage.jsx";
 import ShopPage from "./pagesUser/ShopPage.jsx";
 import AddNewProductPage from "./pagesAdmin/AddNewProductPage.jsx";
@@ -104,7 +104,7 @@ function App() {
   const { fetchSocialMediaLinks } = useSocialMediaLinkStore();
   const { fetchCategories } = CategoryStore();
   const { fetchSubCategories } = SubCategoryStore();
-  const { fetchProductSizes } = useProductSizeStore();
+  const { fetchProductOptions } = useProductOptionStore();
   const { fetchFlags } = useFlagStore();
   const { fetchChildCategories } = useChildCategoryStore();
   const { fetchProducts, fetchProductsAdmin, fetchHomeProducts } =
@@ -122,7 +122,7 @@ function App() {
           fetchSocialMediaLinks(),
           fetchCategories(),
           fetchSubCategories(),
-          fetchProductSizes(),
+          fetchProductOptions(),
           fetchFlags(),
           fetchChildCategories(),
           fetchProducts(),
@@ -264,18 +264,18 @@ function App() {
             element={<EditChildCategoryPage />}
           />
 
-          {/* Product Size Routes */}
+          {/* Product Option Routes */}
           <Route
-            path="/admin/add-product-size"
-            element={<AddNewProductSizePage />}
+            path="/admin/add-product-option"
+            element={<AddNewProductOptionPage />}
           />
           <Route
-            path="/admin/product-sizes"
-            element={<ProductSizeListPage />}
+            path="/admin/product-options"
+            element={<ProductOptionListPage />}
           />
           <Route
-            path="/admin/edit-product-size/:id"
-            element={<EditProductSizePage />}
+            path="/admin/edit-product-option/:id"
+            element={<EditProductOptionPage />}
           />
 
           {/* Product Flag Routes */}

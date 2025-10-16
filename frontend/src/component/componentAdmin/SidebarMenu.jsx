@@ -194,13 +194,13 @@ export default function SidebarMenu() {
                       fallback={true}
                     >
                       <li>
-                        <Link to="/admin/add-product-size">
-                          Add New Product Size
+                        <Link to="/admin/add-product-option">
+                          Add New Product Option
                         </Link>
                       </li>
                       <li>
-                        <Link to="/admin/product-sizes">
-                          View All Product Size
+                        <Link to="/admin/product-options">
+                          View All Product Option
                         </Link>
                       </li>
                     </RequirePermission>

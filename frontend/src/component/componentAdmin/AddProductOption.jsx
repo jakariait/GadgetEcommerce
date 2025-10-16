@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useProductSizeStore from "../../store/useProductSizeStore";
+import useProductOptionStore from "../../store/useProductOptionStore";
 import {
   TextField,
   Button,
@@ -8,31 +8,33 @@ import {
   CircularProgress,
 } from "@mui/material";
 
-const AddProductSize = () => {
-  const { createProductSize, loading, error } = useProductSizeStore();
+const AddProductOption = () => {
+  const { createProductOption, loading, error } = useProductOptionStore();
   const [name, setName] = useState("");
+  const [values, setValues] = useState(""); // To store comma-separated values
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const navigate = useNavigate();
 
-  const data = { name }; // Only sending 'name'
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!name.trim()) {
-      setSnackbarMessage("Product size name is required");
+    if (!name.trim() || !values.trim()) {
+      setSnackbarMessage("Name and values are required");
       setOpenSnackbar(true);
       return;
     }
 
+    const valuesArray = values.split(',').map(v => v.trim()).filter(v => v);
+    const data = { name, values: valuesArray };
+
     try {
-      await createProductSize(data); // Call to the store method
-      setSnackbarMessage("Product size added successfully!");
+      await createProductOption(data);
+      setSnackbarMessage("Product option added successfully!");
       setOpenSnackbar(true);
-      setTimeout(() => navigate("/admin/product-sizes"), 2000); // Redirect after success
+      setTimeout(() => navigate("/admin/product-options"), 2000);
     } catch (err) {
-      setSnackbarMessage(error || "Failed to add product size");
+      setSnackbarMessage(error || "Failed to add product option");
       setOpenSnackbar(true);
     }
   };
@@ -40,18 +42,28 @@ const AddProductSize = () => {
   return (
     <div className="p-4 shadow rounded-lg">
       <h1 className="border-l-4 primaryBorderColor primaryTextColor mb-6 pl-2 text-lg font-semibold">
-        Add Product Size
+        Add Product Option
       </h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <TextField
-          label="Product Size Name"
+          label="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           variant="outlined"
           fullWidth
           required
           error={!name}
-          helperText={!name ? "Product size name is required" : ""}
+          helperText={!name ? "Name is required" : ""}
+        />
+        <TextField
+          label="Values (comma-separated)"
+          value={values}
+          onChange={(e) => setValues(e.target.value)}
+          variant="outlined"
+          fullWidth
+          required
+          error={!values}
+          helperText={!values ? "Values are required" : ""}
         />
 
         <div className="flex justify-center">
@@ -64,7 +76,7 @@ const AddProductSize = () => {
               loading ? <CircularProgress size={20} color="inherit" /> : null
             }
           >
-            {loading ? "Saving..." : "Add Product Size"}
+            {loading ? "Saving..." : "Add Product Option"}
           </Button>
         </div>
       </form>
@@ -80,4 +92,4 @@ const AddProductSize = () => {
   );
 };
 
-export default AddProductSize;
+export default AddProductOption;

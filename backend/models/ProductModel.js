@@ -2,21 +2,24 @@ const mongoose = require("mongoose");
 const CounterModel = require("./CounterModel");
 const slugify = require("slugify");
 
-const productSizeSchema = new mongoose.Schema({
-  size: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "ProductSize",
-    required: true,
-  },
+const variantSchema = new mongoose.Schema({
+  attributes: [
+    {
+      option: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ProductOption",
+        required: true,
+      },
+      value: { type: String, required: true },
+    },
+  ],
   stock: {
     type: Number,
     required: true,
     default: 0,
     min: 0,
     validate: {
-      validator: function (value) {
-        return value >= 0; // Ensure the value is greater than or equal to 0
-      },
+      validator: (value) => value >= 0,
       message: "Stock cannot be negative",
     },
   },
@@ -25,9 +28,7 @@ const productSizeSchema = new mongoose.Schema({
     required: true,
     min: 0,
     validate: {
-      validator: function (value) {
-        return value >= 0; // Ensure the value is greater than or equal to 0
-      },
+      validator: (value) => value >= 0,
       message: "Price cannot be negative",
     },
   },
@@ -35,12 +36,11 @@ const productSizeSchema = new mongoose.Schema({
     type: Number,
     min: 0,
     validate: {
-      validator: function (value) {
-        return value >= 0; // Ensure the value is greater than or equal to 0
-      },
+      validator: (value) => value >= 0,
       message: "Discount cannot be negative",
     },
   },
+  sku: { type: String, trim: true, unique: true, sparse: true },
 });
 
 const productSchema = new mongoose.Schema(
@@ -103,7 +103,7 @@ const productSchema = new mongoose.Schema(
     thumbnailImage: { type: String, trim: true, required: true },
     images: [{ type: String, trim: true, required: true }],
 
-    variants: { type: [productSizeSchema], default: [] },
+    variants: { type: [variantSchema], default: [] },
 
     finalPrice: {
       type: Number,
