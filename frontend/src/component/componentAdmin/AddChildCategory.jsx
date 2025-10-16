@@ -25,6 +25,7 @@ const AddChildCategory = () => {
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [childCategoryName, setChildCategoryName] = useState("");
   const [childCategoryImage, setChildCategoryImage] = useState(null);
+  const [featureCategory, setFeatureCategory] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -77,6 +78,7 @@ const AddChildCategory = () => {
     if (childCategoryImage) {
       formData.append("childCategoryImage", childCategoryImage);
     }
+    formData.append("featureCategory", featureCategory);
 
     try {
       await createChildCategory(formData);
@@ -86,6 +88,7 @@ const AddChildCategory = () => {
       setSelectedCategory("");
       setSelectedSubCategory("");
       setChildCategoryImage(null);
+      setFeatureCategory(true);
 
       // Redirect to child category list after delay
       setTimeout(() => navigate("/admin/childcategorylist"), 2000);
@@ -171,6 +174,19 @@ const AddChildCategory = () => {
               onChange={(e) => setChildCategoryImage(e.target.files[0])}
               className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
             />
+          </Box>
+
+          {/* Feature Category Selection */}
+          <Box mb={2}>
+            <Typography>Feature Category</Typography>
+            <Select
+              fullWidth
+              value={featureCategory}
+              onChange={(e) => setFeatureCategory(e.target.value)}
+            >
+              <MenuItem value={true}>Yes</MenuItem>
+              <MenuItem value={false}>No</MenuItem>
+            </Select>
           </Box>
 
           {/* Submit Button */}

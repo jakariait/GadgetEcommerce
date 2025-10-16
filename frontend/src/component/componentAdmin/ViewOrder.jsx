@@ -195,18 +195,19 @@ const ViewOrder = () => {
 
   if (loading) return <div className="p-4">Loading...</div>;
   if (error) return <div className="p-4 text-red-500">{error}</div>;
+  if (!order) return <div className="p-4">Order not found.</div>;
 
-  const orderStatusColor = getStatusColor(order.orderStatus);
-  const paymentStatusColor = getPaymentStatusColor(order.paymentStatus);
+  const orderStatusColor = getStatusColor(order?.orderStatus);
+  const paymentStatusColor = getPaymentStatusColor(order?.paymentStatus);
 
   return (
     <div>
       <div id="print-area" ref={printRef} className=" p-4 shadow rounded-lg">
         <div id="firstRow" className={"flex justify-between items-center mb-5"}>
-          <h1 className={"text-2xl"}>{GeneralInfoList.CompanyName}</h1>
+          <h1 className={"text-2xl"}>{GeneralInfoList?.CompanyName}</h1>
           <div>
             <ImageComponent
-              imageName={GeneralInfoList.PrimaryLogo}
+              imageName={GeneralInfoList?.PrimaryLogo}
               className={"w-30"}
             />
           </div>
@@ -219,10 +220,10 @@ const ViewOrder = () => {
           <div>
             <h2 className="font-bold text-xl">Shipping Info:</h2>
             <div className="flex flex-col gap-0.5">
-              <p>{order.shippingInfo.fullName}</p>
-              <p>{order.shippingInfo.mobileNo}</p>
-              <p>{order.shippingInfo.email}</p>
-              <p>{order.shippingInfo.address}</p>
+              <p>{order?.shippingInfo?.fullName}</p>
+              <p>{order?.shippingInfo?.mobileNo}</p>
+              <p>{order?.shippingInfo?.email}</p>
+              <p>{order?.shippingInfo?.address}</p>
             </div>
           </div>
 
@@ -230,11 +231,13 @@ const ViewOrder = () => {
           <div id="secondRowRight" className="flex flex-col gap-2">
             <div className="flex justify-between flex-col gap-0.5 text-right">
               <p>
-                <strong>Order No:</strong> {order.orderNo}
+                <strong>Order No:</strong> {order?.orderNo}
               </p>
               <p>
                 <strong>Order Date:</strong>{" "}
-                {new Date(order.orderDate).toLocaleDateString()}
+                {order?.orderDate
+                  ? new Date(order.orderDate).toLocaleDateString()
+                  : "N/A"}
               </p>
               <p>
                 <strong>Status:</strong>{" "}
@@ -248,7 +251,7 @@ const ViewOrder = () => {
               </p>
               <p>
                 <strong>Payment Method:</strong>{" "}
-                {getPaymentMethodText(order.paymentMethod)}
+                {getPaymentMethodText(order?.paymentMethod)}
               </p>
               <p>
                 <strong>Payment Status:</strong>{" "}
@@ -264,22 +267,22 @@ const ViewOrder = () => {
                   {paymentStatusColor.text}
                 </span>
               </p>
-              {order.paymentId && (
+              {order?.paymentId && (
                 <p>
                   <strong>Payment ID:</strong>{" "}
-                  <span className="text-sm">{order.paymentId}</span>
+                  <span className="text-sm">{order?.paymentId}</span>
                 </p>
               )}
 
-              {order.transId && (
+              {order?.transId && (
                 <p>
-                  <strong>Transaction ID:</strong> {order.transId}
+                  <strong>Transaction ID:</strong> {order?.transId}
                 </p>
               )}
 
               <p>
                 <strong>Delivery Method:</strong>{" "}
-                {getDeliveryMethodText(order.deliveryMethod)}
+                {getDeliveryMethodText(order?.deliveryMethod)}
               </p>
             </div>
           </div>
@@ -300,32 +303,28 @@ const ViewOrder = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {order.items.map((item, index) => {
-                  const product = item.productId;
-
-                  // Get the first variant (if any)
-                  const variant = product.variants[0];
-
-                  // Check for discount or final price
-                  const price = item.price;
-                  const totalPrice = price * item.quantity;
+                {(order?.items || []).map((item, index) => {
+                  const product = item?.productId;
+                  const variant = product?.variants?.[0];
+                  const price = item?.price || 0;
+                  const quantity = item?.quantity || 0;
+                  const totalPrice = price * quantity;
 
                   return (
                     <TableRow key={index}>
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>
                         <div>
-                          <div>{product.name}</div>
-                          <div>Category: {item.productId?.category?.name}</div>
-                          <div>Code: {product.productCode}</div>
+                          <div>{product?.name || "N/A"}</div>
+                          <div>
+                            Category: {product?.category?.name || "N/A"}
+                          </div>
+                          <div>Code: {product?.productCode || "N/A"}</div>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        {variant ? variant.sizeName : "N/A"}
-                      </TableCell>
-                      <TableCell>{item.quantity}</TableCell>
-                      <TableCell>{item.price.toFixed(2)}</TableCell>
-
+                      <TableCell>{variant?.sizeName || "N/A"}</TableCell>
+                      <TableCell>{quantity}</TableCell>
+                      <TableCell>{price.toFixed(2)}</TableCell>
                       <TableCell>{totalPrice.toFixed(2)}</TableCell>
                     </TableRow>
                   );
@@ -338,37 +337,48 @@ const ViewOrder = () => {
           <div>
             <h1>Billing Address:</h1>
             <div>
-              <p>{order.shippingInfo.fullName}</p>
-              <p>{order.shippingInfo.address}</p>
+              <p>{order?.shippingInfo?.fullName}</p>
+              <p>{order?.shippingInfo?.address}</p>
             </div>
           </div>
           <div id="thirdRowRight" className="flex flex-col gap-2 items-end">
-            <p>Sub-total: Tk.{order.subtotalAmount.toFixed(2)}</p>
-            {order.promoDiscount !== 0 && (
-              <p>Promo Discount: Tk.{order.promoDiscount.toFixed(2)}</p>
-            )}
-
-            {order.rewardPointsUsed !== 0 && (
-              <p>Reward Points Used: {order.rewardPointsUsed}</p>
-            )}
-
-            {order.vat !== 0 && <p>VAT/TAX: {order.vat.toFixed(2)}</p>}
-
-            <p>Delivery Charge: {order.deliveryCharge.toFixed(2)}</p>
-            {order.specialDiscount !== 0 && (
-              <p>Special Discount Amount: {order.specialDiscount.toFixed(2)}</p>
-            )}
-            <p className={"text-2xl"}>
-              Total Order Amount: {order.totalAmount.toFixed(2)}
+            <p>
+              Sub-total: Tk.{(order?.subtotalAmount || 0).toFixed(2)}
             </p>
-            {order.advanceAmount !== 0 && (
-              <p className={"text-red-500"}>
-                Advance: {order.advanceAmount.toFixed(2)}
+            {order?.promoDiscount ? (
+              <p>
+                Promo Discount: Tk.{(order?.promoDiscount || 0).toFixed(2)}
               </p>
-            )}
+            ) : null}
+
+            {order?.rewardPointsUsed ? (
+              <p>Reward Points Used: {order?.rewardPointsUsed}</p>
+            ) : null}
+
+            {order?.vat ? (
+              <p>VAT/TAX: {(order?.vat || 0).toFixed(2)}</p>
+            ) : null}
+
+            <p>
+              Delivery Charge: {(order?.deliveryCharge || 0).toFixed(2)}
+            </p>
+            {order?.specialDiscount ? (
+              <p>
+                Special Discount Amount:{" "}
+                {(order?.specialDiscount || 0).toFixed(2)}
+              </p>
+            ) : null}
+            <p className={"text-2xl"}>
+              Total Order Amount: {(order?.totalAmount || 0).toFixed(2)}
+            </p>
+            {order?.advanceAmount ? (
+              <p className={"text-red-500"}>
+                Advance: {(order?.advanceAmount || 0).toFixed(2)}
+              </p>
+            ) : null}
 
             <p className={"text-2xl"}>
-              Total Due Amount: {order.dueAmount.toFixed(2)}
+              Total Due Amount: {(order?.dueAmount || 0).toFixed(2)}
             </p>
             <div className="flex justify-end mb-4">
               <button
@@ -383,11 +393,15 @@ const ViewOrder = () => {
       </div>
       <div className="mt-6">
         <RequirePermission permission="edit_orders">
-          <OrderStatusUpdate orderId={order._id} onUpdate={fetchOrder} />
+          {order?._id && (
+            <OrderStatusUpdate orderId={order._id} onUpdate={fetchOrder} />
+          )}
         </RequirePermission>
       </div>
       <div className="mt-6">
-        <CourierStats phone={order.shippingInfo.mobileNo} />
+        {order?.shippingInfo?.mobileNo && (
+          <CourierStats phone={order.shippingInfo.mobileNo} />
+        )}
       </div>
     </div>
   );

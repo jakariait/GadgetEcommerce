@@ -66,6 +66,7 @@ const EditSubCategory = () => {
     formData.append("name", subCategory?.name);
     formData.append("category", subCategory?.category._id);
     formData.append("isActive", subCategory?.isActive);
+    formData.append("featureCategory", subCategory?.featureCategory);
     if (subCategoryImage) {
       formData.append("subCategoryImage", subCategoryImage);
     }
@@ -148,7 +149,7 @@ const EditSubCategory = () => {
             <FormControl fullWidth>
               <InputLabel>Active</InputLabel>
               <Select
-                value={subCategory?.isActive ?? ""}
+                value={subCategory?.isActive == null ? "" : subCategory.isActive ? "true" : "false"}
                 onChange={(e) =>
                   setSubCategory({
                     ...subCategory,
@@ -156,6 +157,25 @@ const EditSubCategory = () => {
                   })
                 }
                 label="Active"
+              >
+                <MenuItem value={"true"}>Yes</MenuItem>
+                <MenuItem value={"false"}>No</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+
+          <div className="space-y-2">
+            <FormControl fullWidth>
+              <InputLabel>Feature Category</InputLabel>
+              <Select
+                value={subCategory?.featureCategory == null ? "" : subCategory.featureCategory ? "true" : "false"}
+                onChange={(e) =>
+                  setSubCategory({
+                    ...subCategory,
+                    featureCategory: e.target.value === "true" ? true : false,
+                  })
+                }
+                label="Feature Category"
               >
                 <MenuItem value={"true"}>Yes</MenuItem>
                 <MenuItem value={"false"}>No</MenuItem>

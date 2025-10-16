@@ -19,6 +19,8 @@ const childCategorySchema = new mongoose.Schema(
     categoryId: { type: Number }, // Auto-increment field
     slug: { type: String, trim: true, unique: true },
     childCategoryImage: { type: String },
+    featureCategory: { type: Boolean, default: true, required: true },
+
   },
   {
     timestamps: true,

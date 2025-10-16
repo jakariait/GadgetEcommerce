@@ -12,7 +12,6 @@ const HomePage = () => {
     <Layout>
       <ProductCarousel />
       <MarqueeModern />
-
       <Feature />
       <AllBrands />
       <FeatureCategory />

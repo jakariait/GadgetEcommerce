@@ -34,6 +34,7 @@ const EditChildCategory = () => {
   const [childCategoryName, setChildCategoryName] = useState("");
   const [childCategoryImage, setChildCategoryImage] = useState(null);
   const [isActive, setIsActive] = useState(true);
+  const [featureCategory, setFeatureCategory] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -65,6 +66,7 @@ const EditChildCategory = () => {
       setSelectedCategory(categoryId || "");
       setSelectedSubCategory(subCategoryId || "");
       setIsActive(childCategoryData.isActive);
+      setFeatureCategory(childCategoryData.featureCategory);
     }
   }, [selectedChildCategory, categories, subCategories]);
 
@@ -101,6 +103,7 @@ const EditChildCategory = () => {
     formData.append("category", selectedCategory);
     formData.append("subCategory", selectedSubCategory);
     formData.append("isActive", isActive);
+    formData.append("featureCategory", featureCategory);
     if (childCategoryImage) {
       formData.append("childCategoryImage", childCategoryImage);
     }
@@ -191,8 +194,22 @@ const EditChildCategory = () => {
               <InputLabel>Active</InputLabel>
               <Select
                 value={isActive}
-                onChange={(e) => setIsActive(e.target.value === true)}
+                onChange={(e) => setIsActive(e.target.value)}
                 label="Active"
+              >
+                <MenuItem value={true}>Yes</MenuItem>
+                <MenuItem value={false}>No</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+
+          <div className="space-y-2">
+            <FormControl fullWidth>
+              <InputLabel>Feature Category</InputLabel>
+              <Select
+                value={featureCategory}
+                onChange={(e) => setFeatureCategory(e.target.value)}
+                label="Feature Category"
               >
                 <MenuItem value={true}>Yes</MenuItem>
                 <MenuItem value={false}>No</MenuItem>

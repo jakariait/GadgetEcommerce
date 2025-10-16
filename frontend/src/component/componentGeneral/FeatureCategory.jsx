@@ -36,7 +36,8 @@ const FeatureCategory = () => {
       ...subCategories.map((sc) => ({ ...sc, type: "subcategory" })),
       ...childCategories.map((cc) => ({ ...cc, type: "childcategory" })),
     ];
-    setAllCategories(combined);
+    const featured = combined.filter((item) => item.featureCategory === true);
+    setAllCategories(featured);
   }, [categories, subCategories, childCategories]);
 
   const getLink = (item) => {

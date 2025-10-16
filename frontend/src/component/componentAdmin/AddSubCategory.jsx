@@ -20,6 +20,7 @@ const AddSubCategory = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [subCategoryName, setSubCategoryName] = useState("");
   const [subCategoryImage, setSubCategoryImage] = useState(null);
+  const [featureCategory, setFeatureCategory] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -58,6 +59,7 @@ const AddSubCategory = () => {
     if (subCategoryImage) {
       formData.append("subCategoryImage", subCategoryImage);
     }
+    formData.append("featureCategory", featureCategory);
 
     try {
       await createSubCategory(formData);
@@ -65,6 +67,7 @@ const AddSubCategory = () => {
       setSubCategoryName("");
       setSelectedCategory("");
       setSubCategoryImage(null);
+      setFeatureCategory(true);
 
       setTimeout(() => {
         navigate("/admin/subcategorylist");
@@ -135,6 +138,18 @@ const AddSubCategory = () => {
                   onChange={(e) => setSubCategoryImage(e.target.files[0])}
                   className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
                 />
+              </Box>
+
+              <Box mb={2}>
+                <Typography>Feature Category</Typography>
+                <Select
+                  fullWidth
+                  value={featureCategory}
+                  onChange={(e) => setFeatureCategory(e.target.value)}
+                >
+                  <MenuItem value={true}>Yes</MenuItem>
+                  <MenuItem value={false}>No</MenuItem>
+                </Select>
               </Box>
 
                 <Button
