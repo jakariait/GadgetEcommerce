@@ -32,7 +32,8 @@ import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import useProductStore from "../../store/useProductStore.js";
 import useOrderStore from "../../store/useOrderStore.js";
-import React from "react";
+import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import RequirePermission from "./RequirePermission.jsx";
 
 import { CircularProgress } from "@mui/material";
@@ -40,8 +41,15 @@ import { CircularProgress } from "@mui/material";
 export default function SidebarMenu() {
   const { totalProductsAdmin } = useProductStore();
   const { logout } = useAuthAdminStore();
-  const { totalByStatus } = useOrderStore();
+  const { totalByStatus, fetchTotalOrdersByAllStatuses } = useOrderStore();
   const { loading } = useAuthAdminStore();
+
+  const location = useLocation();
+
+  useEffect(() => {
+    fetchTotalOrdersByAllStatuses();
+  }, [location.pathname, fetchTotalOrdersByAllStatuses]);
+
   // To access delivered count
   const pendingCount = totalByStatus.pending;
   const approvedCount = totalByStatus.approved;

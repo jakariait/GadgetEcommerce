@@ -13,8 +13,6 @@ const RecentlyViewedProducts = ({ currentProductId }) => {
     setRecentProducts(filtered);
   }, [currentProductId]);
 
-  console.log(recentProducts);
-
   if (recentProducts.length === 0) return null;
 
   return (

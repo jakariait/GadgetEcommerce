@@ -195,8 +195,8 @@ const ProductAddToCart = ({ product }) => {
               selectedVariant?.discount > 0
                 ? selectedVariant.discount
                 : selectedVariant?.price ||
-                  product.finalDiscount ||
-                  product.finalPrice,
+                product.finalDiscount ||
+                product.finalPrice,
             quantity,
           },
         ],
