@@ -529,7 +529,6 @@ const ProductForm = ({ isEditMode = false }) => {
       formData.append("specification", JSON.stringify(processedSpecifications));
     }
 
-    console.log(product);
     try {
       let response;
       if (isEditMode) {
@@ -581,7 +580,7 @@ const ProductForm = ({ isEditMode = false }) => {
         setImagePreview("");
         setSelectedImages([]);
         setImagePreviews([]);
-        setVariants([{ size: "", stock: "", price: "", discount: "" }]);
+        setVariants([{ attributes: [{ option: "", value: "" }], stock: "", price: "", discount: "" }]);
         setHasVariant(true);
         setIsActive("true");
         setSpecification([{ title: "", specs: [{ label: "", value: "" }] }]);
@@ -1422,7 +1421,7 @@ const ProductForm = ({ isEditMode = false }) => {
                                         disabled={!attr.option}
                                     >
                                         {attr.option &&
-                                            productOptions.find((o) => o._id === attr.option)?.values.map((val) => (
+                                            productOptions.find((o) => o._id === attr.option)?.values?.map((val) => (
                                                 <MenuItem key={val} value={val}>
                                                     {val}
                                                 </MenuItem>

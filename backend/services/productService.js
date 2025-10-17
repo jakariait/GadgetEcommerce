@@ -31,8 +31,7 @@ const getProducts = async () => {
 				{ path: "childCategory", select: "-createdAt -updatedAt" },
 				{ path: "brand", select: "-createdAt -updatedAt" },
 				{ path: "flags", select: "-createdAt -updatedAt" },
-				{ path: "variants", select: "-createdAt -updatedAt" },
-				{ path: "variants.size", select: "-createdAt -updatedAt" }, // If size is nested
+				{ path: "variants.attributes.option", model: "ProductOption" },
 			]);
 
 		return products;
@@ -52,8 +51,7 @@ const getProductById = async (productId) => {
 			{ path: "childCategory", select: "-createdAt -updatedAt" },
 			{ path: "brand", select: "-createdAt -updatedAt" },
 			{ path: "flags", select: "-createdAt -updatedAt" },
-			{ path: "variants", select: "-createdAt -updatedAt" },
-			{ path: "variants.size", select: "-createdAt -updatedAt" }, // If size is nested
+			{ path: "variants.attributes.option", model: "ProductOption" },
 		]);
 		if (!product) throw new Error("Product not found");
 		return product;
@@ -72,8 +70,7 @@ const getProductBySlug = async (slug) => {
 			{ path: "childCategory", select: "-createdAt -updatedAt" },
 			{ path: "brand", select: "-createdAt -updatedAt" },
 			{ path: "flags", select: "-createdAt -updatedAt" },
-			{ path: "variants", select: "-createdAt -updatedAt" },
-			{ path: "variants.size", select: "-createdAt -updatedAt" }, // If size is nested
+			{ path: "variants.attributes.option", model: "ProductOption" },
 		]);
 
 		if (!product) throw new Error("Product not found");
@@ -218,8 +215,6 @@ const getAllProducts = async ({
 		// Fetch products with filters, sorting, and pagination
 		const products = await ProductModel.find(query)
 			.sort(sortOption)
-			.skip((page - 1) * limit)
-			.limit(limit)
 			.select(
 				"name slug finalDiscount finalPrice finalStock thumbnailImage isActive images productId category brand variants flags"
 			)
@@ -227,7 +222,7 @@ const getAllProducts = async ({
 				{ path: "category", select: "-createdAt -updatedAt" },
 				{ path: "brand", select: "-createdAt -updatedAt" },
 				{ path: "flags", select: "-createdAt -updatedAt" },
-				{ path: "variants.size", select: "-createdAt -updatedAt" },
+				{ path: "variants.attributes.option", model: "ProductOption" },
 			]);
 
 		return {
@@ -301,70 +296,52 @@ const updateProduct = async (productId, updatedData, files) => {
 		if (updatedData.variants && Array.isArray(updatedData.variants)) {
 			const existingVariantsMap = new Map();
 			product.variants.forEach((v) => {
-				existingVariantsMap.set(v.size._id.toString(), v);
+				existingVariantsMap.set(v._id.toString(), v);
 			});
 
 			updatedData.variants = updatedData.variants.map((variantData, index) => {
-				// Handle all possible size identification formats
-				const sizeId =
-					variantData.size &&
-					typeof variantData.size === "object" &&
-					variantData.size._id
-						? variantData.size._id.toString()
-						: variantData.sizeId
-						? variantData.sizeId.toString()
-						: variantData._id
-						? product.variants.id(variantData._id)?.size._id.toString()
-						: typeof variantData.size === "string"
-						? variantData.size // This handles your current format
-						: null;
+				const variantId = variantData._id ? variantData._id.toString() : null;
 
-				if (!sizeId) {
-					throw new Error(
-						`Cannot identify variant at index ${index}. Valid formats:\n` +
-							`1. { size: "size_id_string" } (your current format)\n` +
-							`2. { size: { _id: "size_id" } }\n` +
-							`3. { sizeId: "size_id" }\n` +
-							`4. { _id: "variant_id" }`
-					);
-				}
+				if (variantId) { // This is an existing variant
+					const existingVariant = existingVariantsMap.get(variantId);
 
-				const existingVariant = existingVariantsMap.get(sizeId);
-
-				if (existingVariant) {
-					return {
-						_id: existingVariant._id,
-						size: existingVariant.size,
-						stock:
-							variantData.stock !== undefined
-								? Number(variantData.stock)
-								: existingVariant.stock,
-						price:
-							variantData.price !== undefined
-								? Number(variantData.price)
-								: existingVariant.price,
-						discount:
-							variantData.discount !== undefined
-								? variantData.discount === ""
-									? null
-									: Number(variantData.discount)
-								: existingVariant.discount,
-					};
+					if (existingVariant) {
+						return {
+							_id: existingVariant._id,
+							attributes: existingVariant.attributes, // attributes are not updatable this way
+							stock:
+								variantData.stock !== undefined
+									? Number(variantData.stock)
+									: existingVariant.stock,
+							price:
+								variantData.price !== undefined
+									? Number(variantData.price)
+									: existingVariant.price,
+							discount:
+								variantData.discount !== undefined
+									? variantData.discount === ""
+										? null
+										: Number(variantData.discount)
+									: existingVariant.discount,
+							sku: variantData.sku !== undefined ? variantData.sku : existingVariant.sku
+						};
+					}
 				}
 
 				// New variant
-				if (!variantData.price || !variantData.stock) {
-					throw new Error(`New variant requires price and stock`);
+				if (!variantData.attributes || !variantData.price || !variantData.stock) {
+					throw new Error(`New variant requires attributes, price and stock`);
 				}
 
 				return {
-					size: { _id: sizeId }, // Convert to proper size object
+					attributes: variantData.attributes,
 					price: Number(variantData.price),
 					stock: Number(variantData.stock),
 					discount:
 						variantData.discount === ""
 							? null
 							: Number(variantData.discount) || null,
+					sku: variantData.sku
 				};
 			});
 		}
@@ -382,7 +359,7 @@ const updateProduct = async (productId, updatedData, files) => {
 	      inputVariants: updatedData.variants,
 	      existingVariants: product ? product.variants?.map((v) => ({ // Conditionally access product.variants
 	        _id: v._id,
-	        size: v.size._id,
+	        attributes: v.attributes,
 	        price: v.price,
 	        stock: v.stock,
 	      })) : undefined, // If product is null, set existingVariants to undefined
@@ -411,7 +388,7 @@ const getSimilarProducts = async (category, excludeId) => {
 				{ path: "category", select: "-createdAt -updatedAt" },
 				{ path: "brand", select: "-createdAt -updatedAt" },
 				{ path: "flags", select: "-createdAt -updatedAt" },
-				{ path: "variants.size", select: "-createdAt -updatedAt" },
+				{ path: "variants.attributes.option", model: "ProductOption" },
 			]);
 
 		// Randomize the order using a Fisher-Yates shuffle
@@ -531,7 +508,7 @@ const getHomePageProducts = async () => {
 					{ path: "category", select: "-createdAt -updatedAt" },
 					{ path: "brand", select: "-createdAt -updatedAt" },
 					{ path: "flags", select: "-createdAt -updatedAt" },
-					{ path: "variants.size", select: "-createdAt -updatedAt" },
+					{ path: "variants.attributes.option", model: "ProductOption" },
 				]);
 
 			result[flag.name] = products;

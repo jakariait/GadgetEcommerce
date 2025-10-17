@@ -305,10 +305,16 @@ const ViewOrder = () => {
               <TableBody>
                 {(order?.items || []).map((item, index) => {
                   const product = item?.productId;
-                  const variant = product?.variants?.[0];
+                  const variant = product?.variants?.find(
+                    (v) => v._id === item.variantId,
+                  );
                   const price = item?.price || 0;
                   const quantity = item?.quantity || 0;
                   const totalPrice = price * quantity;
+
+                  const variantName = variant?.attributes
+                    ? variant.attributes.map((attr) => attr.value).join(" / ")
+                    : "N/A";
 
                   return (
                     <TableRow key={index}>
@@ -322,7 +328,7 @@ const ViewOrder = () => {
                           <div>Code: {product?.productCode || "N/A"}</div>
                         </div>
                       </TableCell>
-                      <TableCell>{variant?.sizeName || "N/A"}</TableCell>
+                      <TableCell>{variantName}</TableCell>
                       <TableCell>{quantity}</TableCell>
                       <TableCell>{price.toFixed(2)}</TableCell>
                       <TableCell>{totalPrice.toFixed(2)}</TableCell>
@@ -342,26 +348,18 @@ const ViewOrder = () => {
             </div>
           </div>
           <div id="thirdRowRight" className="flex flex-col gap-2 items-end">
-            <p>
-              Sub-total: Tk.{(order?.subtotalAmount || 0).toFixed(2)}
-            </p>
+            <p>Sub-total: Tk.{(order?.subtotalAmount || 0).toFixed(2)}</p>
             {order?.promoDiscount ? (
-              <p>
-                Promo Discount: Tk.{(order?.promoDiscount || 0).toFixed(2)}
-              </p>
+              <p>Promo Discount: Tk.{(order?.promoDiscount || 0).toFixed(2)}</p>
             ) : null}
 
             {order?.rewardPointsUsed ? (
               <p>Reward Points Used: {order?.rewardPointsUsed}</p>
             ) : null}
 
-            {order?.vat ? (
-              <p>VAT/TAX: {(order?.vat || 0).toFixed(2)}</p>
-            ) : null}
+            {order?.vat ? <p>VAT/TAX: {(order?.vat || 0).toFixed(2)}</p> : null}
 
-            <p>
-              Delivery Charge: {(order?.deliveryCharge || 0).toFixed(2)}
-            </p>
+            <p>Delivery Charge: {(order?.deliveryCharge || 0).toFixed(2)}</p>
             {order?.specialDiscount ? (
               <p>
                 Special Discount Amount:{" "}
