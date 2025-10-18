@@ -33,7 +33,8 @@ import {
   TableCell,
   Switch,
   Snackbar,
-  Alert, IconButton,
+  Alert,
+  IconButton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
@@ -81,7 +82,14 @@ const ProductForm = ({ isEditMode = false }) => {
   const [purchasePrice, setPurchasePrice] = useState("");
   const [selectedFlags, setSelectedFlags] = useState([]);
   const [hasVariant, setHasVariant] = useState(true);
-  const [variants, setVariants] = useState([{ attributes: [{ option: "", value: "" }], stock: "", price: "", discount: "" }]);
+  const [variants, setVariants] = useState([
+    {
+      attributes: [{ option: "", value: "" }],
+      stock: "",
+      price: "",
+      discount: "",
+    },
+  ]);
   const [isActive, setIsActive] = useState("true"); // Default to active for new products
   const [specification, setSpecification] = useState([
     { title: "", specs: [{ label: "", value: "" }] },
@@ -170,7 +178,10 @@ const ProductForm = ({ isEditMode = false }) => {
       if (product.variants && product.variants.length > 0) {
         setVariants(
           product.variants.map((v) => ({
-            attributes: v.attributes.map(attr => ({ option: attr.option._id, value: attr.value })),
+            attributes: v.attributes.map((attr) => ({
+              option: attr.option._id,
+              value: attr.value,
+            })),
             stock: v.stock,
             price: v.price,
             discount: v.discount || "",
@@ -178,7 +189,14 @@ const ProductForm = ({ isEditMode = false }) => {
         );
         setHasVariant(true);
       } else {
-        setVariants([{ attributes: [{ option: "", value: "" }], stock: "", price: "", discount: "" }]);
+        setVariants([
+          {
+            attributes: [{ option: "", value: "" }],
+            stock: "",
+            price: "",
+            discount: "",
+          },
+        ]);
         setHasVariant(false);
       }
 
@@ -198,7 +216,12 @@ const ProductForm = ({ isEditMode = false }) => {
   const handleAddVariant = () => {
     setVariants([
       ...variants,
-      { attributes: [{ option: "", value: "" }], stock: "", price: "", discount: "" },
+      {
+        attributes: [{ option: "", value: "" }],
+        stock: "",
+        price: "",
+        discount: "",
+      },
     ]);
   };
 
@@ -495,7 +518,7 @@ const ProductForm = ({ isEditMode = false }) => {
     const processedVariants = variants.filter(
       (variant) =>
         variant.attributes.length > 0 &&
-        variant.attributes.every(attr => attr.option && attr.value) &&
+        variant.attributes.every((attr) => attr.option && attr.value) &&
         variant.price &&
         variant.stock !== "" &&
         variant.stock != null,
@@ -507,8 +530,14 @@ const ProductForm = ({ isEditMode = false }) => {
         formData.append(`variants[${index}][price]`, variant.price);
         formData.append(`variants[${index}][discount]`, variant.discount);
         variant.attributes.forEach((attr, attrIndex) => {
-          formData.append(`variants[${index}][attributes][${attrIndex}][option]`, attr.option);
-          formData.append(`variants[${index}][attributes][${attrIndex}][value]`, attr.value);
+          formData.append(
+            `variants[${index}][attributes][${attrIndex}][option]`,
+            attr.option,
+          );
+          formData.append(
+            `variants[${index}][attributes][${attrIndex}][value]`,
+            attr.value,
+          );
         });
       });
     }
@@ -580,7 +609,14 @@ const ProductForm = ({ isEditMode = false }) => {
         setImagePreview("");
         setSelectedImages([]);
         setImagePreviews([]);
-        setVariants([{ attributes: [{ option: "", value: "" }], stock: "", price: "", discount: "" }]);
+        setVariants([
+          {
+            attributes: [{ option: "", value: "" }],
+            stock: "",
+            price: "",
+            discount: "",
+          },
+        ]);
         setHasVariant(true);
         setIsActive("true");
         setSpecification([{ title: "", specs: [{ label: "", value: "" }] }]);
@@ -686,12 +722,12 @@ const ProductForm = ({ isEditMode = false }) => {
 
             {/* Specification Section */}
             <div className={"shadow rounded-lg"}>
-              <Box mt={4} p={2}  borderRadius={2}>
+              <Box mt={4} p={2} borderRadius={2}>
                 <Typography variant="h6" mb={2}>
                   Specification
                 </Typography>
                 {specification.map((specTitle, titleIndex) => (
-                  <Box key={titleIndex} p={2}  borderRadius={2} mb={2}>
+                  <Box key={titleIndex} p={2} borderRadius={2} mb={2}>
                     <Box display="flex" alignItems="center" gap={2}>
                       <TextField
                         label="Title"
@@ -757,7 +793,6 @@ const ProductForm = ({ isEditMode = false }) => {
                 </Button>
               </Box>
             </div>
-
 
             {/* Search Tag Input */}
             <Box mb={2}>
@@ -1389,61 +1424,80 @@ const ProductForm = ({ isEditMode = false }) => {
                         <TableRow key={index}>
                           <TableCell>
                             {variant.attributes.map((attr, attrIndex) => (
-                                <Box key={attrIndex} display="flex" alignItems="center" gap={1} mb={1}>
-                                    <TextField
-                                        select
-                                        label="Option"
-                                        value={attr.option}
-                                        onChange={(e) => {
-                                            const updatedVariants = [...variants];
-                                            updatedVariants[index].attributes[attrIndex].option = e.target.value;
-                                            updatedVariants[index].attributes[attrIndex].value = ''; // Reset value
-                                            setVariants(updatedVariants);
-                                        }}
-                                        sx={{ width: "120px" }}
+                              <Box
+                                key={attrIndex}
+                                display="flex"
+                                alignItems="center"
+                                gap={1}
+                                mb={1}
+                              >
+                                <TextField
+                                  select
+                                  label="Option"
+                                  value={attr.option}
+                                  onChange={(e) => {
+                                    const updatedVariants = [...variants];
+                                    updatedVariants[index].attributes[
+                                      attrIndex
+                                    ].option = e.target.value;
+                                    updatedVariants[index].attributes[
+                                      attrIndex
+                                    ].value = ""; // Reset value
+                                    setVariants(updatedVariants);
+                                  }}
+                                  sx={{ width: "120px" }}
+                                >
+                                  {productOptions.map((option) => (
+                                    <MenuItem
+                                      key={option._id}
+                                      value={option._id}
                                     >
-                                        {productOptions.map((option) => (
-                                            <MenuItem key={option._id} value={option._id}>
-                                                {option.name}
-                                            </MenuItem>
-                                        ))}
-                                    </TextField>
-                                    <TextField
-                                        select
-                                        label="Value"
-                                        value={attr.value}
-                                        onChange={(e) => {
-                                            const updatedVariants = [...variants];
-                                            updatedVariants[index].attributes[attrIndex].value = e.target.value;
-                                            setVariants(updatedVariants);
-                                        }}
-                                        sx={{ width: "120px" }}
-                                        disabled={!attr.option}
-                                    >
-                                        {attr.option &&
-                                            productOptions.find((o) => o._id === attr.option)?.values?.map((val) => (
-                                                <MenuItem key={val} value={val}>
-                                                    {val}
-                                                </MenuItem>
-                                            ))}
-                                    </TextField>
-                                    <IconButton
-                                        color="error"
-                                        size="small"
-                                        onClick={() => handleRemoveAttribute(index, attrIndex)}
-                                    >
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </Box>
+                                      {option.name}
+                                    </MenuItem>
+                                  ))}
+                                </TextField>
+                                <TextField
+                                  select
+                                  label="Value"
+                                  value={attr.value}
+                                  onChange={(e) => {
+                                    const updatedVariants = [...variants];
+                                    updatedVariants[index].attributes[
+                                      attrIndex
+                                    ].value = e.target.value;
+                                    setVariants(updatedVariants);
+                                  }}
+                                  sx={{ width: "120px" }}
+                                  disabled={!attr.option}
+                                >
+                                  {attr.option &&
+                                    productOptions
+                                      .find((o) => o._id === attr.option)
+                                      ?.values?.map((val) => (
+                                        <MenuItem key={val} value={val}>
+                                          {val}
+                                        </MenuItem>
+                                      ))}
+                                </TextField>
+                                <IconButton
+                                  color="error"
+                                  size="small"
+                                  onClick={() =>
+                                    handleRemoveAttribute(index, attrIndex)
+                                  }
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
+                              </Box>
                             ))}
                             <Button
-                                variant="outlined"
-                                size="small"
-                                onClick={() => handleAddAttribute(index)}
+                              variant="outlined"
+                              size="small"
+                              onClick={() => handleAddAttribute(index)}
                             >
-                                + Add Attribute
+                              + Add Attribute
                             </Button>
-                        </TableCell>
+                          </TableCell>
                           <TableCell>
                             <TextField
                               type="number"

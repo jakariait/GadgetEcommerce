@@ -95,6 +95,8 @@ import BlogDetailsPage from "./pagesUser/BlogDetailsPage.jsx";
 import ForgetPasswordPage from "./pagesUser/ForgetPasswordPage.jsx";
 import ResetPasswordPage from "./pagesUser/ResetPasswordPage.jsx";
 import BrandsPage from "./pagesAdmin/BrandsPage.jsx";
+import ProductCompare from "./component/componentGeneral/ProductCompare.jsx";
+import CompareProductPage from "./pagesUser/CompareProductPage.jsx";
 
 function App() {
   const { GeneralInfoListRequest, GeneralInfoList } = GeneralInfoStore();
@@ -188,6 +190,7 @@ function App() {
         <Route path="/blogs/:slug" element={<BlogDetailsPage />} />
         <Route path="/forgot-password" element={<ForgetPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/product-compare" element={<CompareProductPage />} />
 
         {/*Admin Login Page*/}
         <Route path="/admin/login" element={<AdminLogin />} />

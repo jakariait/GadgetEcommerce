@@ -1,11 +1,12 @@
 import React from "react";
 import ImageComponent from "./ImageComponent.jsx";
+import { Link } from "react-router-dom";
 
 const ProductBrand = ({ product }) => {
   return (
     <div>
       {product?.brand && (
-        <div className="flex items-center gap-3 mt-4">
+        <div className="flex items-center gap-3 ">
           {/* Brand Logo */}
           {product.brand.logo && (
             <ImageComponent
@@ -16,9 +17,14 @@ const ProductBrand = ({ product }) => {
           )}
 
           {/* Brand Name */}
-          <h2 className="text-lg font-semibold text-gray-800">
-            {product.brand.name}
-          </h2>
+          <Link
+            to={`/shop?page=1&limit=20&brand=${product.brand.slug}`}
+            key={product.brand._id}
+          >
+            <h2 className="text-lg font-semibold text-gray-800">
+              {product.brand.name}
+            </h2>
+          </Link>
         </div>
       )}
     </div>

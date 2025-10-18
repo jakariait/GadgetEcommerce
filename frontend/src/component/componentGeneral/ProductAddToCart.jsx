@@ -4,6 +4,7 @@ import { FiMinus } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import useCartStore from "../../store/useCartStore.js";
 import ProductBrand from "./ProductBrand.jsx";
+import CompareButton from "./CompareButton.jsx";
 
 const ProductAddToCart = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
@@ -232,7 +233,13 @@ const ProductAddToCart = ({ product }) => {
     <div>
       <div>
         <div className="flex flex-col gap-3 md:col-span-4 lg:col-span-3 xl:col-span-4 pt-4 md:pt-0">
-          <ProductBrand product={product} />
+
+
+          {/*Brand and Compare Button*/}
+          <div className={"flex justify-between items-center"}>
+            <ProductBrand product={product} />
+            <CompareButton product={product} />
+          </div>
 
           <h2 className="text-xl md:text-2xl  ">{product.name}</h2>
 

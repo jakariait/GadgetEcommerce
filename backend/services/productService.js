@@ -9,6 +9,14 @@ const mongoose = require("mongoose");
 // Create a new product
 const createProduct = async (data) => {
 	try {
+		// Parse specification if it's a JSON string
+		if (data.specification && typeof data.specification === 'string') {
+			try {
+				data.specification = JSON.parse(data.specification);
+			} catch (e) {
+				throw new Error("Invalid specification format. Expected a valid JSON string.");
+			}
+		}
 		const product = new ProductModel(data); // Save product with image names
 		await product.save();
 		return product;
