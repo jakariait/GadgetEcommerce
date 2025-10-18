@@ -97,6 +97,7 @@ import ResetPasswordPage from "./pagesUser/ResetPasswordPage.jsx";
 import BrandsPage from "./pagesAdmin/BrandsPage.jsx";
 import ProductCompare from "./component/componentGeneral/ProductCompare.jsx";
 import CompareProductPage from "./pagesUser/CompareProductPage.jsx";
+import CompareFloatingButton from "./component/componentGeneral/CompareFloatingButton.jsx";
 
 function App() {
   const { GeneralInfoListRequest, GeneralInfoList } = GeneralInfoStore();
@@ -168,6 +169,7 @@ function App() {
       <MetaProvider />
       <ScrollToTop />
       <ScrollToTopButton />
+      <CompareFloatingButton />
       <Routes>
         {/* General User Routes */}
         <Route path="/" element={<HomePage />} />

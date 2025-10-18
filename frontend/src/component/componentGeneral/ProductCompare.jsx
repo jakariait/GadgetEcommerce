@@ -34,8 +34,16 @@ const ProductCompare = () => {
 
   return (
     <div className="xl:container xl:mx-auto shadow p-4 rounded-lg mt-6 mb-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Compare Products</h1>
+      <div className="flex flex-col md:flex-row gap-3 justify-between items-center mb-6">
+
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Compare Products</h1>
+          <p className={"text-sm text-gray-500"}>
+            Find and select products to see the differences and similarities
+            between them
+          </p>
+        </div>
+
         <button
           onClick={clearCompare}
           className="flex items-center gap-2 text-sm text-red-500 hover:text-red-700 transition-colors"
@@ -61,7 +69,7 @@ const ProductCompare = () => {
             return (
               <div
                 key={product._id}
-                className="bg-white rounded-lg shadow-md w-72 flex-shrink-0 border border-gray-200"
+                className="bg-white rounded-lg shadow w-72 flex-shrink-0 border border-gray-200"
               >
                 <div className="relative p-4 border-b border-gray-200">
                   <ImageComponent
@@ -110,7 +118,7 @@ const ProductCompare = () => {
                       )}
                     </div>
                     <div className="border-t border-gray-200 pt-4">
-                      <Specification product={product} />
+                      <Specification product={product} comparePage={true} />
                     </div>
                   </div>
                 </div>
