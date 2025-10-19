@@ -3,6 +3,8 @@ import useCompareStore from "../../store/useCompareStore.js";
 import ImageComponent from "./ImageComponent.jsx";
 import React from "react";
 import Specification from "./Specification.jsx";
+import ProductBrand from "./ProductBrand.jsx";
+import { Link } from "react-router-dom";
 
 const ProductCompare = () => {
   const { compareList, removeFromCompare, clearCompare } = useCompareStore();
@@ -35,9 +37,8 @@ const ProductCompare = () => {
   return (
     <div className="xl:container xl:mx-auto shadow p-4 rounded-lg mt-6 mb-6">
       <div className="flex flex-col md:flex-row gap-3 justify-between items-center mb-6">
-
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Compare Products</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Compare Product</h1>
           <p className={"text-sm text-gray-500"}>
             Find and select products to see the differences and similarities
             between them
@@ -46,7 +47,7 @@ const ProductCompare = () => {
 
         <button
           onClick={clearCompare}
-          className="flex items-center gap-2 text-sm text-red-500 hover:text-red-700 transition-colors"
+          className="flex items-center cursor-pointer gap-2 text-sm text-red-500 hover:text-red-700 transition-colors"
         >
           <Trash2 size={18} />
           Clear All
@@ -79,7 +80,7 @@ const ProductCompare = () => {
                   />
                   <button
                     onClick={() => removeFromCompare(product._id)}
-                    className="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition-colors"
+                    className="absolute top-2 cursor-pointer right-2 text-gray-400 hover:text-red-500 transition-colors"
                   >
                     <X size={20} />
                   </button>
@@ -105,6 +106,11 @@ const ProductCompare = () => {
                         </div>
                       )}
                     </div>
+
+                    <div className="border-t border-gray-200 pt-4 flex items-center justify-center">
+                      <ProductBrand product={product} />
+                    </div>
+
                     <div className="border-t border-gray-200 pt-4">
                       {product.shortDesc ? (
                         <div
@@ -117,8 +123,19 @@ const ProductCompare = () => {
                         <div className="text-center text-gray-500">-</div>
                       )}
                     </div>
+
                     <div className="border-t border-gray-200 pt-4">
                       <Specification product={product} comparePage={true} />
+                    </div>
+
+                    <div className="border-t border-gray-200 pt-4 flex items-center justify-center">
+                      {/* Buy Now button (link to product page) */}
+                      <Link
+                        to={`/product/${product.slug}`} // Adjust route based on your app
+                        className="inline-block primaryBgColor text-white text-sm font-medium px-4 py-2 rounded-md transition-all"
+                      >
+                        Buy Now
+                      </Link>
                     </div>
                   </div>
                 </div>
