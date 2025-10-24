@@ -161,7 +161,15 @@ const ProductAddToCart = ({ product }) => {
 
   const handleAddToCart = () => {
     if (!selectedVariant) {
-      setValidationMessage("Please select all variant options.");
+      const requiredOptions = options.map((o) => o.name);
+      const missingOptions = requiredOptions.filter(
+        (opt) => !selectedOptions[opt],
+      );
+      if (missingOptions.length > 0) {
+        setValidationMessage(`${missingOptions.join(" / ")} required!`);
+      } else if (product.variants?.length > 0) {
+        setValidationMessage("Please select all variant options.");
+      }
       return;
     }
     addToCart(product, quantity, selectedVariant);
@@ -196,8 +204,8 @@ const ProductAddToCart = ({ product }) => {
               selectedVariant?.discount > 0
                 ? selectedVariant.discount
                 : selectedVariant?.price ||
-                product.finalDiscount ||
-                product.finalPrice,
+                  product.finalDiscount ||
+                  product.finalPrice,
             quantity,
           },
         ],
@@ -233,8 +241,6 @@ const ProductAddToCart = ({ product }) => {
     <div>
       <div>
         <div className="flex flex-col gap-3 md:col-span-4 lg:col-span-3 xl:col-span-4 pt-4 md:pt-0">
-
-
           {/*Brand and Compare Button*/}
           <div className={"flex justify-between items-center"}>
             <ProductBrand product={product} />
@@ -388,7 +394,6 @@ const ProductAddToCart = ({ product }) => {
               <button
                 className="primaryBgColor accentTextColor px-2 py-1 md:py-2 rounded w-44 cursor-pointer"
                 onClick={handleAddToCart}
-                disabled={!selectedVariant}
               >
                 ADD TO CART
               </button>
@@ -399,14 +404,25 @@ const ProductAddToCart = ({ product }) => {
                 className="primaryBgColor w-44 accentTextColor px-2 py-1 md:py-2 rounded cursor-pointer"
                 onClick={() => {
                   if (!selectedVariant) {
-                    setValidationMessage("Please select all variant options.");
+                    const requiredOptions = options.map((o) => o.name);
+                    const missingOptions = requiredOptions.filter(
+                      (opt) => !selectedOptions[opt],
+                    );
+                    if (missingOptions.length > 0) {
+                      setValidationMessage(
+                        `${missingOptions.join(" / ")} required!`,
+                      );
+                    } else if (product.variants?.length > 0) {
+                      setValidationMessage(
+                        "Please select all variant options.",
+                      );
+                    }
                     return;
                   }
                   addToCart(product, quantity, selectedVariant);
                   navigate("/checkout");
                   setValidationMessage("");
                 }}
-                disabled={!selectedVariant}
               >
                 BUY NOW
               </button>
