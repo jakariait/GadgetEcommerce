@@ -34,7 +34,7 @@ const ProductQuestionsSection = ({ productId }) => {
   // Submit new question
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!newQuestion.trim() || !user) return;
+    if (!newQuestion.trim()) return;
 
     setLoading(true);
     try {
@@ -86,28 +86,34 @@ const ProductQuestionsSection = ({ productId }) => {
       </p>
 
       {/* Ask Question Form */}
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
-        <input
-          type="text"
-          placeholder={
-            user
-              ? "Ask a question about this product..."
-              : "Please sign in to ask a question"
-          }
-          className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none"
-          value={newQuestion}
-          onChange={(e) => setNewQuestion(e.target.value)}
-          disabled={loading || !user}
-        />
-        <button
-          type="submit"
-          disabled={loading || !user}
-          className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-all flex items-center cursor-pointer justify-center gap-2 "
-        >
-          <Send size={16} />
-          {loading ? "Sending..." : "Ask"}
-        </button>
-      </form>
+      {user ? (
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+          <input
+            type="text"
+            placeholder="Ask a question about this product..."
+            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none"
+            value={newQuestion}
+            onChange={(e) => setNewQuestion(e.target.value)}
+            disabled={loading}
+          />
+          <button
+            type="submit"
+            disabled={loading || !newQuestion.trim()}
+            className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-all flex items-center cursor-pointer justify-center gap-2 disabled:bg-gray-400"
+          >
+            <Send size={16} />
+            {loading ? "Sending..." : "Ask"}
+          </button>
+        </form>
+      ) : (
+        <div className="bg-gray-100 rounded-lg py-2 text-center text-gray-500">
+          Please{" "}
+          <a href="/login" className="text-blue-600 hover:underline">
+            sign in
+          </a>{" "}
+          to ask a question.
+        </div>
+      )}
 
       {/* Display Questions */}
       <div className="space-y-4">

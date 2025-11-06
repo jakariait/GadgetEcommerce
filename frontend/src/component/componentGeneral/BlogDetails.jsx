@@ -43,7 +43,7 @@ const BlogDetails = () => {
   }
 
   return (
-    <div className="xl:container mx-auto p-8 max-w-4xl">
+    <div className="xl:container mx-auto p-8 ">
       <h1 className="text-3xl font-bold mb-4">{blog.name}</h1>
 
       <div className="flex items-center justify-center w-full mb-10 mt-10">

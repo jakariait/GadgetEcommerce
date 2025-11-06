@@ -25,9 +25,7 @@ const ProductReviewSections = ({ productId }) => {
   // Fetch reviews for this product
   const fetchReviews = async () => {
     try {
-      const res = await axios.get(
-        `${apiBaseUrl}/reviews/product/${productId}`,
-      );
+      const res = await axios.get(`${apiBaseUrl}/reviews/product/${productId}`);
       setReviews(res.data.reviews || []);
       setTotalReviews(res.data.totalReviews || 0);
       setAverageRating(res.data.averageRating || 0);
@@ -66,7 +64,8 @@ const ProductReviewSections = ({ productId }) => {
       );
       setSnackbar({
         open: true,
-        message: "Review submitted successfully! It will be visible after approval.",
+        message:
+          "Review submitted successfully! It will be visible after approval.",
         severity: "success",
       });
       setNewComment("");
@@ -100,13 +99,18 @@ const ProductReviewSections = ({ productId }) => {
         <div className="flex flex-col items-center">
           <span className="text-4xl font-bold">{averageRating}</span>
           <Rating value={parseFloat(averageRating)} readOnly precision={0.1} />
-          <span className="text-sm text-gray-500">({totalReviews} reviews)</span>
+          <span className="text-sm text-gray-500">
+            ({totalReviews} reviews)
+          </span>
         </div>
       </div>
 
       {/* Write a Review Form */}
       {user ? (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3 border-t pt-4">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-3 border-t pt-4"
+        >
           <h3 className="font-semibold">Write a review</h3>
           <Rating
             name="simple-controlled"
@@ -134,8 +138,12 @@ const ProductReviewSections = ({ productId }) => {
           </button>
         </form>
       ) : (
-        <div className="bg-gray-100 py-2 text-center text-gray-500">
-          Please <a href="/login" className="text-blue-600 hover:underline">sign in</a> to write a review.
+        <div className="bg-gray-100 rounded-lg py-2 text-center text-gray-500">
+          Please{" "}
+          <a href="/login" className="text-blue-600 hover:underline">
+            sign in
+          </a>{" "}
+          to write a review.
         </div>
       )}
 
@@ -153,7 +161,9 @@ const ProductReviewSections = ({ productId }) => {
             >
               <div className="flex items-center gap-2 mb-2">
                 <Rating value={review.rating} readOnly size="small" />
-                <span className="font-semibold">{review.userId?.fullName || "Anonymous"}</span>
+                <span className="font-semibold">
+                  {review.userId?.fullName || "Anonymous"}
+                </span>
               </div>
               <p className="text-gray-800 mb-1">{review.comment}</p>
               <p className="text-xs text-gray-400 mt-2">
@@ -171,7 +181,11 @@ const ProductReviewSections = ({ productId }) => {
         onClose={() => setSnackbar({ ...snackbar, open: false })}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} sx={{ width: '100%' }}>
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>
