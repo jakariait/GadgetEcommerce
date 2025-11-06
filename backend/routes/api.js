@@ -415,7 +415,10 @@ router.delete(
 
 // Product Option Routes
 router.get("/product-options", productOptionController.getAllProductOptions);
-router.get("/product-options/:id", productOptionController.getProductOptionById);
+router.get(
+  "/product-options/:id",
+  productOptionController.getProductOptionById,
+);
 router.post(
   "/product-options",
   adminProtect,
@@ -780,13 +783,28 @@ router.post(
   userProtect,
   productQuestionController.createQuestion,
 );
+
 router.get(
   "/products/:productId/questions",
   productQuestionController.getQuestionsByProduct,
 );
 router.get("/questions/:id", productQuestionController.getQuestionById);
-router.put("/questions/:id", productQuestionController.updateQuestion);
-router.delete("/questions/:id", productQuestionController.deleteQuestion);
+router.put(
+  "/questions/:id",
+  adminProtect,
+  productQuestionController.updateQuestion,
+);
+router.delete(
+  "/questions/:id",
+  adminProtect,
+  productQuestionController.deleteQuestion,
+);
+
+router.get(
+  "/questions",
+  adminProtect,
+  productQuestionController.getAllQuestions,
+);
 
 // Product Reviews CRUD Routes
 router.post("/reviews", reviewController.createReview);
@@ -795,9 +813,6 @@ router.get("/reviews/:id", reviewController.getReviewById);
 router.put("/reviews/:id", reviewController.updateReview);
 router.delete("/reviews/:id", reviewController.deleteReview);
 
-router.get(
-  "/reviews",
-  reviewController.getAllReviews,
-);
+router.get("/reviews", reviewController.getAllReviews);
 
 module.exports = router;

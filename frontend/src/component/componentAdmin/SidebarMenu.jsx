@@ -20,7 +20,7 @@ import {
   FaShoppingBag,
   FaInfo,
   FaClipboardList,
-  FaBlog
+  FaBlog,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import useAuthAdminStore from "../../store/AuthAdminStore.js";
@@ -647,6 +647,15 @@ export default function SidebarMenu() {
               </Link>
             </li>
           </RequirePermission>
+
+          <li>
+            <Link
+              to="/admin/product-questions"
+              className="flex items-center space-x-2 p-2 rounded-md cursor-pointer"
+            >
+              <FaUsers /> <span>Product Question</span>
+            </Link>
+          </li>
         </ul>
       </div>
 

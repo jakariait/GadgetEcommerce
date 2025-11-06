@@ -60,6 +60,15 @@ const deleteQuestion = async (req, res) => {
   }
 };
 
+const getAllQuestions = async (req, res) => {
+  try {
+    const questions = await productQuestionService.getAllQuestions();
+    res.status(200).json({ message: "All questions retrieved successfully", questions });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to get all questions", error: error.message });
+  }
+};
+
 // Export controller functions
 module.exports = {
   createQuestion,
@@ -67,4 +76,5 @@ module.exports = {
   getQuestionById,
   updateQuestion,
   deleteQuestion,
+  getAllQuestions,
 };

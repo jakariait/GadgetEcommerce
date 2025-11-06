@@ -19,9 +19,18 @@ const getQuestionById = async (id) => {
     .populate("userId", "name email")
 };
 
+const getAllQuestions = async () => {
+  return ProductQuestion.find({})
+      .populate("userId", "name email fullName")
+      .populate("productId", "name slug")
+      .sort({ createdAt: -1 });
+};
+
 // Update / Answer question
 const updateQuestion = async (id, updateData) => {
-  return ProductQuestion.findByIdAndUpdate(id, updateData, { new: true });
+  return ProductQuestion.findByIdAndUpdate(id, updateData, { new: true })
+    .populate("userId", "name email fullName")
+    .populate("productId", "name slug");
 };
 
 // Delete question
@@ -36,4 +45,5 @@ module.exports = {
   getQuestionById,
   updateQuestion,
   deleteQuestion,
+  getAllQuestions,
 };

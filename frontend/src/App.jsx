@@ -98,6 +98,7 @@ import BrandsPage from "./pagesAdmin/BrandsPage.jsx";
 import ProductCompare from "./component/componentGeneral/ProductCompare.jsx";
 import CompareProductPage from "./pagesUser/CompareProductPage.jsx";
 import CompareFloatingButton from "./component/componentGeneral/CompareFloatingButton.jsx";
+import ProductQuestionPage from "./pagesAdmin/ProductQuestionPage.jsx";
 
 function App() {
   const { GeneralInfoListRequest, GeneralInfoList } = GeneralInfoStore();
@@ -361,6 +362,9 @@ function App() {
           <Route path="/admin/blogs" element={<BlogsListPage />} />
 
           <Route path="/admin/blogs/:id" element={<EditBlogPage />} />
+
+          <Route path="/admin/product-questions" element={<ProductQuestionPage />} />
+
         </Route>
 
         {/* Not Found */}
