@@ -44,7 +44,7 @@ const BlogDetails = () => {
 
   return (
     <div className="xl:container mx-auto p-8 ">
-      <h1 className="text-3xl font-bold mb-4">{blog.name}</h1>
+      <h1 className="text-xl md:text-3xl font-bold ">{blog.name}</h1>
 
       <div className="flex items-center justify-center w-full mb-10 mt-10">
         <ImageComponent imageName={blog.thumbnailImage} />
@@ -61,22 +61,22 @@ const BlogDetails = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-12 gap-5">
-        <div
-          className="rendered-html col-span-10"
-          dangerouslySetInnerHTML={{ __html: blog.longDesc }}
-        />
-        <div className="flex flex-col gap-2 mt-4 col-span-2">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2 mt-4 ">
           <h1 className="text-lg font-semibold">Tags:</h1>
           {blog.searchTags?.map((tag, index) => (
             <span
               key={index}
-              className="bg-orange-200 text-gray-800 px-3 py-1 rounded"
+              className="bg-orange-200 text-gray-800 px-3 py-1 rounded w-fit"
             >
               {tag}
             </span>
           ))}
         </div>
+        <div
+          className="rendered-html "
+          dangerouslySetInnerHTML={{ __html: blog.longDesc }}
+        />
       </div>
     </div>
   );
