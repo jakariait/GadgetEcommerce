@@ -22,8 +22,6 @@ const Cart = ({ onCloseCartMenu }) => {
     return Number(amount).toLocaleString();
   };
 
-
-
   // console.table(cart);
 
   return (
@@ -34,12 +32,14 @@ const Cart = ({ onCloseCartMenu }) => {
             <img src={emptyCart} alt="Empty Cart" className="w-48 h-auto" />
             <p>There are no more items in your cart!</p>
 
-            <button
-              className="primaryBgColor accentTextColor px-6 py-2 rounded mt-4 cursor-pointer"
-              onClick={onCloseCartMenu}
-            >
-              Continue Shopping
-            </button>
+            <Link to={`/shop`}>
+              <button
+                className="primaryBgColor accentTextColor px-6 py-2 rounded mt-4 cursor-pointer"
+                onClick={onCloseCartMenu}
+              >
+                Continue Shopping
+              </button>
+            </Link>
           </div>
         </div>
       ) : (

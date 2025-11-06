@@ -5,9 +5,7 @@ import TrackOrder from "../component/componentGeneral/TrackOrder.jsx";
 const TrackOrderPage = () => {
   return (
     <Layout>
-
       <TrackOrder/>
-
     </Layout>
   );
 };

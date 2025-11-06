@@ -160,7 +160,7 @@ const ProductAddToCart = ({ product }) => {
   };
 
   const handleAddToCart = () => {
-    if (!selectedVariant) {
+    if (product.variants?.length > 0 && !selectedVariant) {
       const requiredOptions = options.map((o) => o.name);
       const missingOptions = requiredOptions.filter(
         (opt) => !selectedOptions[opt],
@@ -365,7 +365,10 @@ const ProductAddToCart = ({ product }) => {
                   "primaryBgColor accentTextColor px-2 py-2 md:py-3 rounded-l cursor-pointer"
                 }
                 onClick={() => handleQuantityChange("decrease")}
-                disabled={!selectedVariant || selectedVariant.stock === 0}
+                disabled={
+                  product.variants?.length > 0 &&
+                  (!selectedVariant || selectedVariant.stock === 0)
+                }
               >
                 <FiMinus />
               </button>
@@ -378,9 +381,9 @@ const ProductAddToCart = ({ product }) => {
                 }
                 onClick={() => handleQuantityChange("increase")}
                 disabled={
-                  !selectedVariant ||
+                  (product.variants?.length > 0 && !selectedVariant) ||
                   quantity >= MAX_QUANTITY ||
-                  selectedVariant.stock === 0
+                  selectedVariant?.stock === 0
                 }
               >
                 <FaPlus />
@@ -403,7 +406,7 @@ const ProductAddToCart = ({ product }) => {
               <button
                 className="primaryBgColor w-44 accentTextColor px-2 py-1 md:py-2 rounded cursor-pointer"
                 onClick={() => {
-                  if (!selectedVariant) {
+                  if (product.variants?.length > 0 && !selectedVariant) {
                     const requiredOptions = options.map((o) => o.name);
                     const missingOptions = requiredOptions.filter(
                       (opt) => !selectedOptions[opt],

@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { MdEmail, MdClose } from "react-icons/md";
-import { TfiTruck } from "react-icons/tfi";
-import { CiSearch, CiShoppingCart } from "react-icons/ci";
+import {  MdClose } from "react-icons/md";
+import { CiShoppingCart } from "react-icons/ci";
 import { IoPersonOutline } from "react-icons/io5";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoIosLogOut } from "react-icons/io";
