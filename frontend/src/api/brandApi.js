@@ -20,7 +20,7 @@ export const createBrand = async (brandData) => {
 // Get all brands
 export const getBrands = async () => {
   const response = await axios.get(API_URL);
-  return response.data.brands;
+  return response.data.data;
 };
 
 // Get a single brand by ID

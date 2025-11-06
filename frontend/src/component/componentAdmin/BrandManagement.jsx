@@ -203,6 +203,8 @@ const BrandManagementContent = () => {
     },
   ];
 
+
+
   if (isError) {
     return <div>Error: {error.message}</div>;
   }
