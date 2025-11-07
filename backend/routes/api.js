@@ -807,12 +807,12 @@ router.get(
 );
 
 // Product Reviews CRUD Routes
-router.post("/reviews", reviewController.createReview);
+router.post("/reviews", userProtect, reviewController.createReview);
 router.get("/reviews/product/:productId", reviewController.getReviewsByProduct);
 router.get("/reviews/:id", reviewController.getReviewById);
-router.put("/reviews/:id", reviewController.updateReview);
-router.delete("/reviews/:id", reviewController.deleteReview);
+router.put("/reviews/:id", adminProtect, reviewController.updateReview);
+router.delete("/reviews/:id", adminProtect, reviewController.deleteReview);
 
-router.get("/reviews", reviewController.getAllReviews);
+router.get("/reviews",adminProtect, reviewController.getAllReviews);
 
 module.exports = router;

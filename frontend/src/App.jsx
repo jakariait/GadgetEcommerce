@@ -99,6 +99,7 @@ import ProductCompare from "./component/componentGeneral/ProductCompare.jsx";
 import CompareProductPage from "./pagesUser/CompareProductPage.jsx";
 import CompareFloatingButton from "./component/componentGeneral/CompareFloatingButton.jsx";
 import ProductQuestionPage from "./pagesAdmin/ProductQuestionPage.jsx";
+import ProductReviewPage from "./pagesAdmin/ProductReviewPage.jsx";
 
 function App() {
   const { GeneralInfoListRequest, GeneralInfoList } = GeneralInfoStore();
@@ -364,6 +365,8 @@ function App() {
           <Route path="/admin/blogs/:id" element={<EditBlogPage />} />
 
           <Route path="/admin/product-questions" element={<ProductQuestionPage />} />
+
+          <Route path="/admin/product-reviews" element={<ProductReviewPage />} />
 
         </Route>
 

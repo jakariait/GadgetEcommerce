@@ -48,7 +48,7 @@ const deleteReview = async (id) => {
 // Get all reviews (for admin)
 const getAllReviews = async () => {
   return ProductReview.find({})
-    .populate("userId", "name email")
+    .populate("userId", "fullName email")
     .populate("productId", "name") // Assuming product model has a 'name' field
     .sort({ createdAt: -1 });
 };
