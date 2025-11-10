@@ -251,6 +251,11 @@ const getMenuConfig = ({
         icon: <FaUsers />,
         to: "/admin/product-questions",
       },
+      {
+        label: "Product Reviews",
+        icon: <FaUsers />,
+        to: "/admin/product-reviews",
+      },
     ],
   },
   {

@@ -283,13 +283,13 @@ const ProductDetails = () => {
           </div>
 
           <div className="md:grid md:grid-cols-8 lg:grid-cols-8 gap-8">
-            <div className="md:col-span-3 lg:col-span-4 relative">
+            <div className="md:col-span-4 lg:col-span-4 relative">
               <ProductGallery
                 images={product.images}
                 discount={discountPercentage}
               />
             </div>
-            <div className="flex flex-col gap-3 md:col-span-5 lg:col-span-4 pt-4 md:pt-0 ">
+            <div className="flex flex-col gap-3 md:col-span-4 lg:col-span-4 pt-4 md:pt-0 ">
               <ProductAddToCart product={product} />
 
               <div className={"flex gap-2 justify-between"}>

@@ -42,7 +42,7 @@ const AllBrands = () => {
         </h2>
         <div className="flex-grow h-px bg-gray-400"></div>
       </div>
-      <div className="grid grid-cols-1  md:grid-cols-6 items-center justify-center gap-3">
+      <div className="grid grid-cols-3 md:grid-cols-4  lg:grid-cols-6 items-center justify-center gap-3">
         {loading ? (
           Array.from({ length: 6 }).map((_, index) => (
             <BrandCardSkeleton key={index} />

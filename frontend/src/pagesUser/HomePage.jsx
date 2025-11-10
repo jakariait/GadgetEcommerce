@@ -7,8 +7,6 @@ import AllBrands from "../component/componentGeneral/AllBrands.jsx";
 import FeatureCategory from "../component/componentGeneral/FeatureCategory.jsx";
 import MarqueeModern from "../component/componentGeneral/MarqueeModern.jsx";
 
-
-
 const HomePage = () => {
   return (
     <Layout>
@@ -18,7 +16,6 @@ const HomePage = () => {
       <AllBrands />
       <FeatureCategory />
       <ProductByFlag />
-
     </Layout>
   );
 };

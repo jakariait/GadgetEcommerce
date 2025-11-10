@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {  MdClose } from "react-icons/md";
+import { MdClose } from "react-icons/md";
 import { CiShoppingCart } from "react-icons/ci";
 import { IoPersonOutline } from "react-icons/io5";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -155,9 +155,7 @@ const Headers = () => {
         }`}
       >
         {/* Header Main */}
-        <div
-          className="border-b border-gray-200 md:px-3 primaryBgColor text-white"
-        >
+        <div className="border-b border-gray-200 md:px-3 primaryBgColor text-white">
           <div className="xl:container xl:mx-auto py-3 px-3 flex gap-6 items-center justify-between">
             <div
               ref={hamburgerRef}
@@ -245,7 +243,8 @@ const Headers = () => {
                             to="/user/home"
                             className={"flex items-center gap-2 "}
                           >
-                            <IoPersonOutline className="w-6 h-6 hover:secondaryTextColor" />
+                            <IoPersonOutline className="w-6 h-6 hover:secondaryTextColor" />{" "}
+                            {user?.fullName}
                           </Link>
                         </button>
                         <button

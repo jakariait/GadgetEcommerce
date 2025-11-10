@@ -53,8 +53,8 @@ const ProductList = ({ products, productPage }) => {
         <div
           className={
             productPage
-              ? "grid grid-cols-1 gap-3 mt-4"
-              : "grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 mt-4"
+              ? "grid grid-cols-1 gap-3 mt-4 "
+              : "grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4  gap-3 mt-4"
           }
         >
           {/*Product Display Section*/}
@@ -63,9 +63,9 @@ const ProductList = ({ products, productPage }) => {
               // List View
               <div
                 key={product.slug}
-                className="relative flex gap-4 items-center  p-2 rounded-md shadow-sm"
+                className="relative flex gap-4 items-center  p-2 rounded-md  shadow-sm "
               >
-                <div className="w-1/3">
+                <div className="w-1/3 ">
                   <Link to={`/product/${product.slug}`}>
                     <ImageComponent
                       imageName={product.thumbnailImage}
@@ -154,7 +154,10 @@ const ProductList = ({ products, productPage }) => {
               </div>
             ) : (
               // Grid View
-              <div key={product.slug} className="relative">
+              <div
+                key={product.slug}
+                className="relative shadow-sm rounded-md p-2"
+              >
                 <Link to={`/product/${product.slug}`}>
                   <ImageComponent
                     imageName={product.thumbnailImage}
