@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import ImageComponent from "./ImageComponent.jsx";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const BrandCardSkeleton = () => {
   return (
@@ -16,6 +17,8 @@ const AllBrands = () => {
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isScrollable, setIsScrollable] = useState(false);
+  const scrollContainerRef = useRef(null);
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -33,18 +36,60 @@ const AllBrands = () => {
     fetchBrands();
   }, [API_URL]);
 
+  useEffect(() => {
+    const checkScrollable = () => {
+      if (scrollContainerRef.current) {
+        const { scrollWidth, clientWidth } = scrollContainerRef.current;
+        setIsScrollable(scrollWidth > clientWidth);
+      }
+    };
+
+    checkScrollable();
+    window.addEventListener("resize", checkScrollable);
+    return () => window.removeEventListener("resize", checkScrollable);
+  }, [brands, loading]);
+
+  const scroll = (scrollOffset) => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollLeft += scrollOffset;
+    }
+  };
+
   return (
-    <div className="xl:container  xl:mx-auto pb-6 px-3">
+    <div className="xl:container xl:mx-auto pb-4 px-3">
       <div className="flex items-center gap-4 my-6">
         <div className="flex-grow h-px bg-gray-400"></div>
         <h2 className="text-lg pl-10 pr-10 font-bold secondaryTextColor whitespace-nowrap uppercase tracking-widest">
           All Brands
         </h2>
         <div className="flex-grow h-px bg-gray-400"></div>
+        {isScrollable && (
+          <div className="flex gap-2">
+            <button
+              onClick={() => scroll(-200)}
+              className="p-2 bg-gray-200 rounded-full hover:bg-gray-300"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <button
+              onClick={() => scroll(200)}
+              className="p-2 bg-gray-200 rounded-full hover:bg-gray-300"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+        )}
       </div>
-      <div className="grid grid-cols-3 md:grid-cols-4  lg:grid-cols-6 items-center justify-center gap-3">
+      <div
+        ref={scrollContainerRef}
+        className="grid grid-flow-col  auto-cols-max gap-3 overflow-x-auto scrollbar-hide pb-4 mb-4"
+        style={{
+          gridTemplateRows: "repeat(2, minmax(0, 1fr))",
+          maxHeight: "400px",
+        }}
+      >
         {loading ? (
-          Array.from({ length: 6 }).map((_, index) => (
+          Array.from({ length: 20 }).map((_, index) => (
             <BrandCardSkeleton key={index} />
           ))
         ) : error ? (
@@ -61,7 +106,7 @@ const AllBrands = () => {
               <ImageComponent
                 imageName={brand.logo}
                 altName={brand.name}
-                className={"w-24 h-24 object-contain  mb-4"}
+                className={"w-24 h-24 object-contain mb-4"}
                 skeletonHeight={100}
               />
               <h3 className="text-lg font-medium">{brand.name}</h3>

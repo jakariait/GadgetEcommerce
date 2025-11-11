@@ -223,6 +223,8 @@ const getAllProducts = async ({
 		// Fetch products with filters, sorting, and pagination
 		const products = await ProductModel.find(query)
 			.sort(sortOption)
+			.skip((page - 1) * limit) // Apply skip for pagination
+			.limit(limit) // Apply limit for pagination
 			.select(
 				"name slug finalDiscount finalPrice finalStock thumbnailImage isActive images productId category brand variants flags"
 			)

@@ -1,6 +1,6 @@
 import { useState, memo, useRef, useCallback, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FaAngleDown, FaAngleRight } from "react-icons/fa6";
+
 import useCategoryStore from "../../store/useCategoryStore.js";
 import useSubCategoryStore from "../../store/useSubCategoryStore.js";
 import useChildCategoryStore from "../../store/useChildCategoryStore.js";
@@ -38,8 +38,8 @@ const MenuBar = () => {
 
   return (
     <div className="shadow-xs items-center justify-center  flex lg:bg-white">
-      <nav className=" xl:container xl:mx-auto">
-        <ul className="lg:flex">
+      <nav className=" xl:container xl:mx-auto ">
+        <ul className="flex flex-wrap">
           <MenuItem
             label={
               <Link to="/shop" className="block">
@@ -69,7 +69,7 @@ const MenuBar = () => {
                     label={
                       <Link
                         to={categoryPath}
-                        className="grid grid-cols-2 gap-1 items-center justify-center w-full text-left"
+                        className=""
                         onClick={(e) => {
                           // Prevent navigation if already on this category
                           if (isCurrentRoute(categoryQuery)) {
@@ -78,7 +78,7 @@ const MenuBar = () => {
                         }}
                       >
                         {category.name}
-                        {hasSubCategories && <FaAngleDown />}
+
                       </Link>
                     }
                   >
@@ -228,7 +228,7 @@ const SubMenuItem = memo(
         >
           <span className="flex items-center justify-between">
             {subCategory.name}
-            {hasChildCategories && <FaAngleRight />}
+
           </span>
         </Link>
         {hasChildCategories && (
