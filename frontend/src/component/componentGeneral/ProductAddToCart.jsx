@@ -251,7 +251,7 @@ const ProductAddToCart = ({ product }) => {
 
           <div className="flex text-center flex-col gap-2">
             {!product.variants?.length && (
-              <div className="grid grid-cols-2 gap-2 items-center ">
+              <div className="grid md:grid-cols-2 gap-2 items-center ">
                 {product.finalDiscount > 0 ? (
                   <>
                     <div className="text-red-800 bg-gray-100 px-2 py-1 rounded-lg">
@@ -283,7 +283,7 @@ const ProductAddToCart = ({ product }) => {
             )}
 
             {variantForPrice && (
-              <div className="grid grid-cols-2 gap-2 items-center">
+              <div className="grid md:grid-cols-2 gap-2 items-center">
                 {variantForPrice.discount > 0 ? (
                   <>
                     <div className="text-red-800 bg-gray-100 px-2 py-1 rounded-lg">
