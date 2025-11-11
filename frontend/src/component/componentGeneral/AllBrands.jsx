@@ -90,7 +90,12 @@ const AllBrands = () => {
       >
         {loading ? (
           Array.from({ length: 20 }).map((_, index) => (
-            <BrandCardSkeleton key={index} />
+            <div
+              className={"flex items-center justify-center px-2 "}
+              key={index}
+            >
+              <BrandCardSkeleton key={index} />
+            </div>
           ))
         ) : error ? (
           <p className="text-center py-10 text-red-500 col-span-full">
