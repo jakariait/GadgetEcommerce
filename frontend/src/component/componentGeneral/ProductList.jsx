@@ -171,7 +171,7 @@ const ProductList = ({ products, productPage }) => {
                   </div>
                 </Link>
 
-                <div className="flex gap-2 justify-center">
+                <div className="flex md:flex-row flex-col items-center gap-2 justify-center">
                   {/*Base Price*/}
                   {product.variants?.length ? (
                     product.variants[0].discount > 0 ? (
